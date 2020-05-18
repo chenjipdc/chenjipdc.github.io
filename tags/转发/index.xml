@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>转发 on home</title>
+    <link>/tags/%E8%BD%AC%E5%8F%91/</link>
+    <description>Recent content in 转发 on home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 23 Sep 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/%E8%BD%AC%E5%8F%91/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>rinetd转发</title>
+      <link>/post/2018-09-23-rinetd-%E8%BD%AC%E5%8F%91/</link>
+      <pubDate>Sun, 23 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-23-rinetd-%E8%BD%AC%E5%8F%91/</guid>
+      <description>安装依赖库 yum -y install gcc automake autoconf libtool make
+安装 cat &amp;gt;&amp;gt; rinetd-installer.sh &amp;lt;&amp;lt;&#39;EOF&#39; #!/bin/bash wget http://www.boutell.com/rinetd/http/rinetd.tar.gz tar zxvf rinetd.tar.gz cd rinetd mkdir -p /usr/man/man8 make &amp;amp;&amp;amp; make install EOF chmod +x rinetd-installer.sh ./rinetd-installer.sh  配置 rm -f /etc/rinetd.conf cat &amp;gt;&amp;gt; /etc/rinetd.conf &amp;lt;&amp;lt;EOF # 设置允许访问的ip地址信息 allow 192.168.1.* # 设置日志文件路径 # logfile /var/log/rinetd.log # 例子: 将本机 8080 端口重定向至 www.baidu.com 的 80 端口 # 0.0.0.0 8080 www.baidu.com 80 EOF  启动 cat &amp;gt;&amp;gt; /etc/init.</description>
+    </item>
+    
+  </channel>
+</rss>

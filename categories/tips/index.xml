@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tips on home</title>
+    <link>/categories/tips/</link>
+    <description>Recent content in Tips on home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 10 Jan 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/tips/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>mysql tips</title>
+      <link>/post/2019-01-10-mysql-tips/</link>
+      <pubDate>Thu, 10 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-01-10-mysql-tips/</guid>
+      <description>mysql常用操作 # curd等 insert into table_name values (xx,xx,xx); select *from table_name; update table_name set a=xx, b=xx where c=xx; delete from table_name where a=xx; explain select *from a=xxx; # 状态、参数、表信息等 # 官网show命令：https://dev.mysql.com/doc/refman/8.0/en/show.html show indexes from table_name; show status like &#39;slow_queries&#39;; show status like &#39;connections&#39; ; show status like &#39;threads%&#39;; Show status like &#39;slow_queries&#39; or like &#39;connections&#39; or like &#39;threads&#39;; show variables like &#39;%default%&#39;; show engine innodb status; show processlist; analyze table table_name;  mysql索引  聚簇索引（保存整条记录） 普通索引（保存主键，然后回表查询记录） 下推索引（mysql 5.</description>
+    </item>
+    
+  </channel>
+</rss>

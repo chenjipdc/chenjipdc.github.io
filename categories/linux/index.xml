@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux on home</title>
+    <link>/categories/linux/</link>
+    <description>Recent content in Linux on home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 15 Apr 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>awk常规使用</title>
+      <link>/post/2019-04-14-awk%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Mon, 15 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-04-14-awk%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/</guid>
+      <description>参考coolshell：https://coolshell.cn/articles/9070.html
+参考《sed与awk第二版》
+ awk能完成的一些功能  将文本文件看作是由记录跟字段组成的文本数据库 使用变量操作数据库 使用算数和字符串操作符 使用普通的程序设计结构，如循环和条件 生成格式化报告 定义函数 从脚本中执行Unix命令 处理Unix命令的结果 更加巧妙的处理命令行的参数 更容易的处理多个输入流  内建变量    $0 该行记录(所有列)     \$1 - $n 第几列，由FS分割   FS 分割列的符号，默认空格或tab   NF 列数   NR 总行数，如是多个文件则为所有文件累加   FNR 各文件行数   RS 每行记录的分隔符，默认为换行   OFS 输出字段分隔符，默认空格   ORS 输出的记录分隔符，默认换行   FILENAME 文件名称    操作示例 # 打印第1、第2列 netstat -nat | head -n 20 | awk &#39;{print $1,$2}&#39; # 匹配第4列为字符串&amp;quot;tcp4&amp;quot;并且第6列为字符串&amp;quot;LISTEN&amp;quot;，或条件为`|`，其他运算符&amp;quot;!</description>
+    </item>
+    
+    <item>
+      <title>vim常规使用</title>
+      <link>/post/2019-04-13-vim%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Sat, 13 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-04-13-vim%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/</guid>
+      <description>参考coolshell：https://coolshell.cn/articles/5426.html
+vim tutorial：vimtutor
+ 基础操作  i、a - 光标处、后插入 o、O - 光标行后、前一行插入 x - 删除光标后一个字符 r、R - 替换一个、多个字符 dd - 删除当前行 p - 粘贴 yy - 拷贝当前行 u - undo ctrl + r - redo ctrl + b、ctrl + f - 上一页、下一页 ctrl + u、ctrl + d - 上半页、下半页 ctrl + y、ctrl + e - 向上、下滚动一行 :s /old/new 、:s /old/new/g- 当前行第一个、所有old字符换为new字符 :% s/old/new/g - 整个文件替换字符old为new esc - 退出编辑模式，回到normal模式  光标移动  hjkl - 分别对应←↓↑→ w、W - 到下一个单词开头，W到下一个单词（遇到blank后）开头 e、E - 到单词结尾，E到单词（直到遇到blank）结尾 b、B - 到单词开头，B到单词（直到遇到blank）开头 0 - 回行头 ^|_ - 到非blank字符行头 +和- - 移动到下一行开头、上一行开头 $ - 到行尾 g_ - 到非blank字符行尾 gg|1G|:1 - 回到文件第一行 G - 到文件最尾一行 NG|:N|Ngg - 到第N行 *、# - 匹配光标当前单词上一个(#)和下一个(*) % - 括号间移动，匹配(){}[]，需把光标放到括号上 fh - 移动光标到下一个字符为h的地方，Nfh为下N个 th - 移动光标到下一个字符为h的前一个字符，Nth为下N个 z - 将光标行移动到屏幕顶端 z.</description>
+    </item>
+    
+    <item>
+      <title>rinetd转发</title>
+      <link>/post/2018-09-23-rinetd-%E8%BD%AC%E5%8F%91/</link>
+      <pubDate>Sun, 23 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-23-rinetd-%E8%BD%AC%E5%8F%91/</guid>
+      <description>安装依赖库 yum -y install gcc automake autoconf libtool make
+安装 cat &amp;gt;&amp;gt; rinetd-installer.sh &amp;lt;&amp;lt;&#39;EOF&#39; #!/bin/bash wget http://www.boutell.com/rinetd/http/rinetd.tar.gz tar zxvf rinetd.tar.gz cd rinetd mkdir -p /usr/man/man8 make &amp;amp;&amp;amp; make install EOF chmod +x rinetd-installer.sh ./rinetd-installer.sh  配置 rm -f /etc/rinetd.conf cat &amp;gt;&amp;gt; /etc/rinetd.conf &amp;lt;&amp;lt;EOF # 设置允许访问的ip地址信息 allow 192.168.1.* # 设置日志文件路径 # logfile /var/log/rinetd.log # 例子: 将本机 8080 端口重定向至 www.baidu.com 的 80 端口 # 0.0.0.0 8080 www.baidu.com 80 EOF  启动 cat &amp;gt;&amp;gt; /etc/init.</description>
+    </item>
+    
+    <item>
+      <title>centos升级内核</title>
+      <link>/post/2018-09-21-centos%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/</link>
+      <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-21-centos%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/</guid>
+      <description>升级centos系统内核 https://www.howtoforge.com/tutorial/how-to-upgrade-kernel-in-centos-7-server/
+# ==== 查看信息 ==== # step 1 yum -y update # 安装镜像插件，加速下载 yum -y install yum-plugin-fastestmirror # step 2 # 查看centos版本 cat /etc/redhat-release cat /etc/os-release # 查看主机详情 uname -a # ==== 主要 ==== # step 3 # 添加镜像源地址 rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm yum repolist # step 4 # 开启新加的elrepo-kernel源可用，并安装内核 yum -y --enablerepo=elrepo-kernel install kernel-ml # 查看源列表 yum repolist all # step 5 # 查看有多少个版本内核 sudo awk -F\&#39; &#39;$1==&amp;quot;menuentry &amp;quot; {print i++ &amp;quot; : &amp;quot; $2}&#39; /etc/grub2.</description>
+    </item>
+    
+    <item>
+      <title>linux用户相关基础</title>
+      <link>/post/2018-09-23-linux%E7%94%A8%E6%88%B7%E7%9B%B8%E5%85%B3%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-23-linux%E7%94%A8%E6%88%B7%E7%9B%B8%E5%85%B3%E5%9F%BA%E7%A1%80/</guid>
+      <description>相关命令  useradd 添加用户 usermod 修改用户 userdel 删除用户 passwd 修改用户密码 groupadd 添加用户组 groupmod 更改用户组 groupdel 删除用户组 chmod 改变文件的权限, SUID, SGID, SBIT等等的特性 chgrp 改变文件所属群组 chown 改变文件拥有者 groups 查看自己在什么群组 newgrp 切换群组  准备  用docker起一个ssh服务端 docker run -d --name ssh-server -p 2020:22 jdeathe/centos-ssh:centos-7 进入容器修改为允许使用用户名密码登录
+# 进入容器 docker exec -ti ssh-server-1 bash # 修改配置 vi /etc/ssh/sshd_config # 将PasswordAuthentication的no改为yes # 查看sshd线程 ps aux | grep sshd # 刷新修改，即可用默认用户名跟密码登录 kill -1 ${pid}  通过docker logs ssh-server可以查看到, 默认用户名密码</description>
+    </item>
+    
+  </channel>
+</rss>

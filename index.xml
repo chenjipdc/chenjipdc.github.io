@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>home</title>
+    <link>/</link>
+    <description>Recent content on home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 15 Apr 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>awk常规使用</title>
+      <link>/post/2019-04-14-awk%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Mon, 15 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-04-14-awk%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/</guid>
+      <description>参考coolshell：https://coolshell.cn/articles/9070.html
+参考《sed与awk第二版》
+ awk能完成的一些功能  将文本文件看作是由记录跟字段组成的文本数据库 使用变量操作数据库 使用算数和字符串操作符 使用普通的程序设计结构，如循环和条件 生成格式化报告 定义函数 从脚本中执行Unix命令 处理Unix命令的结果 更加巧妙的处理命令行的参数 更容易的处理多个输入流  内建变量    $0 该行记录(所有列)     \$1 - $n 第几列，由FS分割   FS 分割列的符号，默认空格或tab   NF 列数   NR 总行数，如是多个文件则为所有文件累加   FNR 各文件行数   RS 每行记录的分隔符，默认为换行   OFS 输出字段分隔符，默认空格   ORS 输出的记录分隔符，默认换行   FILENAME 文件名称    操作示例 # 打印第1、第2列 netstat -nat | head -n 20 | awk &#39;{print $1,$2}&#39; # 匹配第4列为字符串&amp;quot;tcp4&amp;quot;并且第6列为字符串&amp;quot;LISTEN&amp;quot;，或条件为`|`，其他运算符&amp;quot;!</description>
+    </item>
+    
+    <item>
+      <title>vim常规使用</title>
+      <link>/post/2019-04-13-vim%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Sat, 13 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-04-13-vim%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/</guid>
+      <description>参考coolshell：https://coolshell.cn/articles/5426.html
+vim tutorial：vimtutor
+ 基础操作  i、a - 光标处、后插入 o、O - 光标行后、前一行插入 x - 删除光标后一个字符 r、R - 替换一个、多个字符 dd - 删除当前行 p - 粘贴 yy - 拷贝当前行 u - undo ctrl + r - redo ctrl + b、ctrl + f - 上一页、下一页 ctrl + u、ctrl + d - 上半页、下半页 ctrl + y、ctrl + e - 向上、下滚动一行 :s /old/new 、:s /old/new/g- 当前行第一个、所有old字符换为new字符 :% s/old/new/g - 整个文件替换字符old为new esc - 退出编辑模式，回到normal模式  光标移动  hjkl - 分别对应←↓↑→ w、W - 到下一个单词开头，W到下一个单词（遇到blank后）开头 e、E - 到单词结尾，E到单词（直到遇到blank）结尾 b、B - 到单词开头，B到单词（直到遇到blank）开头 0 - 回行头 ^|_ - 到非blank字符行头 +和- - 移动到下一行开头、上一行开头 $ - 到行尾 g_ - 到非blank字符行尾 gg|1G|:1 - 回到文件第一行 G - 到文件最尾一行 NG|:N|Ngg - 到第N行 *、# - 匹配光标当前单词上一个(#)和下一个(*) % - 括号间移动，匹配(){}[]，需把光标放到括号上 fh - 移动光标到下一个字符为h的地方，Nfh为下N个 th - 移动光标到下一个字符为h的前一个字符，Nth为下N个 z - 将光标行移动到屏幕顶端 z.</description>
+    </item>
+    
+    <item>
+      <title>Hugo</title>
+      <link>/post/2019-04-09-hugo/</link>
+      <pubDate>Tue, 09 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-04-09-hugo/</guid>
+      <description>什么是hugo？ Hugo是由Go语言实现的静态网站生成器。简单、易用、高效、易扩展、快速部署。
+安装hugo github上各版本
+mac安装 brew insall hugo
+linux安装 cd /data/pkg/ wget https://github.com/gohugoio/hugo/releases/download/v0.55.0/hugo_0.55.0_Linux-64bit.tar.gz tar -vxf hugo_0.55.0_Linux-64bit.tar.gz ln -s /data/pkg/hugo /usr/local/bin/hugo ln -s /usr/local/bin/hugo /bin/hugo  源码安装 下载源码，go build相关命令即可编译出，不详细操作。
+使用hugo 使用帮助：hugo --help
+本地website：hugo server --theme=mainroad --bind=0.0.0.0，需要建立content文件夹放.md文件。
+生成静态网页部署到个人站点：hugo --theme=mainroad，静态网页在publish文件夹内，可放到github仓库根目录作为个人站点使用。
+ &amp;ndash;theme 为主题名称
+ hugo themes 主题地址，主题比较丰富，文档也较全，一般参考主题下的demo配置即可。如需熟练使用，还需熟悉hugo官方各文档，体验各主题之间差异，亦或自己构建主题都可。
+hugo参数介绍参考 官网参数介绍，参数较多，各主题使用参数基本类似。
+hugo使用mainroad主题 mainroad 文档
+mainroad集成google统计 只需在配置文件config.toml配置googleAnalytics = &amp;quot;xxx&amp;quot;参数即可，xxx为google tracking id。配置好后即可统计网站流量。
+mainroad集成Disqus 只需在配置文件config.toml配置disqusShortname = &amp;quot;xxx&amp;quot;参数即可，xxx为disqus的short name。配置好后，即可开启评论回复等功能。 效果图: .md文件配置示例 --- title: &amp;quot;(Hu)go Template Primer&amp;quot; date: 2014-04-02 thumbnail: &amp;quot;img/placeholder.</description>
+    </item>
+    
+    <item>
+      <title>github等整理的资料</title>
+      <link>/post/2019-04-08-github%E7%AD%89%E6%95%B4%E7%90%86%E7%9A%84%E8%B5%84%E6%96%99/</link>
+      <pubDate>Mon, 08 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-04-08-github%E7%AD%89%E6%95%B4%E7%90%86%E7%9A%84%E8%B5%84%E6%96%99/</guid>
+      <description>containers  k8s go client  数学  MIT-18.06-线性代数-完整笔记  java  SpringBoot-Learning 循序渐进，学习Spring Boot、Spring Boot &amp;amp; Shiro、Spring Cloud和Spring Security，博客Spring系列源码 Spring Cloud 学习案例，服务发现、服务治理、链路追踪、服务监控等 Lock-Learning 互联网 Java 工程师进阶知识完全扫盲 java学习/面试指南 后端架构师技术图谱  数据结构，算法等  用动画的形式呈现解LeetCode题目的思路 数据结构与算法/leetcode/lintcode题解 算法珠玑 剑指Offer——名企面试官精讲典型编程题 algorithms  linux  linux command linux内核揭秘  flutter  flutter-go demo flutter example apps flutter examples  golang  go语言圣经 go高级编程 go web kcp yamux go脚本 go项目  python  Python-100天  nginx  Nginx Quick Reference] Nginx Config nginx从入门到精通  monitor  grafana-dashboards prometheus mysqld_exporter grafana prometheus  testing  HTTP load generator, ApacheBench (ab) replacement, formerly known as rakyll/boom  devops  ansible examples  proxy  v2ray  hack  micro8  ebook  https://github.</description>
+    </item>
+    
+    <item>
+      <title>关于</title>
+      <link>/about/</link>
+      <pubDate>Mon, 08 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/about/</guid>
+      <description>没上过天，但下过地。平平无奇，平平凡凡。
+没有闪耀的轨迹，也没有辉煌的人生。
+入了这坑，就要在坑上干点事。
+主营java。
+社会纷繁缭绕，唯有宝刀不老，方能屹立坚挺。</description>
+    </item>
+    
+    <item>
+      <title>常用软件、工具安装</title>
+      <link>/post/2019-04-08-%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Mon, 08 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-04-08-%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/</guid>
+      <description>其他工具 mac  brew install ruby - 替换系统默认的ruby环境，不然很多操作都要加sudo brew install nginx brew install automake brew install iproute2mac - 替换net-tools工具 brew install openssl brew install jq - json处理 brew install glide - go包管理工具 brew install mariadb - mysql客户端 brew install tldr - 查看命令示例，man的文档太长 brew install fd - find命令的升级版，更加高效 brew install http - curl、wget工具的替换，like tool for humans brew install tmux - 类screen  centos  yum install epel-release - 安装最新软件包源 yum install -y nginx yum install -y lsof telnet tcpdump iproute2 yum install -y mariadb - mysql客户端 yum install -y &amp;quot;Development Tools&amp;quot; - 开发工具包  ubuntu  apt-get install iputils-ping  alpine  apk add busybox-extras  git  npm install -g commitizen - commit规范化  安装docker-ce 脚本一键安装 curl -fsSL https://get.</description>
+    </item>
+    
+    <item>
+      <title>mysql tips</title>
+      <link>/post/2019-01-10-mysql-tips/</link>
+      <pubDate>Thu, 10 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-01-10-mysql-tips/</guid>
+      <description>mysql常用操作 # curd等 insert into table_name values (xx,xx,xx); select *from table_name; update table_name set a=xx, b=xx where c=xx; delete from table_name where a=xx; explain select *from a=xxx; # 状态、参数、表信息等 # 官网show命令：https://dev.mysql.com/doc/refman/8.0/en/show.html show indexes from table_name; show status like &#39;slow_queries&#39;; show status like &#39;connections&#39; ; show status like &#39;threads%&#39;; Show status like &#39;slow_queries&#39; or like &#39;connections&#39; or like &#39;threads&#39;; show variables like &#39;%default%&#39;; show engine innodb status; show processlist; analyze table table_name;  mysql索引  聚簇索引（保存整条记录） 普通索引（保存主键，然后回表查询记录） 下推索引（mysql 5.</description>
+    </item>
+    
+    <item>
+      <title>grafana、prometheus初体验</title>
+      <link>/post/2019-01-06-grafana_prometheus_%E5%88%9D%E4%BD%93%E9%AA%8C/</link>
+      <pubDate>Sun, 06 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-01-06-grafana_prometheus_%E5%88%9D%E4%BD%93%E9%AA%8C/</guid>
+      <description>测试机：阿里云抢占式实例 centos 7.5
+外网ip：47.107.169.xxx
+内网ip：172.18.201.49
+1.安装docker：  阿里源安装
+ https://yq.aliyun.com/articles/110806?spm=5176.8351553.0.0.ad631991oPQ1ue
+# step 1: 安装必要的一些系统工具 sudo yum install -y yum-utils device-mapper-persistent-data lvm2 # Step 2: 添加软件源信息 sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo # Step 3: 更新并安装 Docker-CE sudo yum makecache fast sudo yum -y install docker-ce # Step 4: 开启Docker服务 sudo systemctl start docker   官网一键脚本安装文档
+ https://docs.docker.com/install/linux/docker-ce/centos/#install-using-the-convenience-script
+2.node_exporter  参考
+ https://github.com/prometheus/node_exporter
+ 安装
+ wget https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz tar xvfz node_exporter-0.17.0.linux-amd64.tar.gz cd node_exporter-0.</description>
+    </item>
+    
+    <item>
+      <title>mongodb主从(不建议使用)</title>
+      <link>/post/2018-09-25-mongodb%E4%B8%BB%E4%BB%8E%E4%B8%8D%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Tue, 25 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-25-mongodb%E4%B8%BB%E4%BB%8E%E4%B8%8D%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/</guid>
+      <description>参考资料 官网 master-slave
+mongodb的主从要注意的事项  主服务器挂掉，从服务器不会自动取代主服务器。 主服务器挂掉后重启，从服务器则会重新同步数据，之前同步过来的数据被初始化。 综合以上两点，mongodb要随时做好数据备份，以免造成无法弥补的数据丢失！！！  master docker run -v ~/docker/test/mongo/test1/data/:/data/db -p 27001:27017 --name master_mongo --network docker_default mongo:3.2 mongod --dbpath /data/db --master  slave docker run -v ~/docker/test/mongo/test2/data/:/data/db -p 27002:27017 --name slave_mongo --network docker_default mongo:3.2 mongod --dbpath /data/db --slave --source 192.168.1.222:27001   &amp;ndash;only 可指定database &amp;ndash;slavedelay &amp;ndash;fastsyn &amp;ndash;aoturesync &amp;ndash;oplogSize   也可先创建从节点(slave)
+docker run -v ~/docker/test/mongo/test3/data/:/data/db -p 27003:27017 --name slave1_mongo --network docker_default mongo:3.2 mongod --dbpath /data/db --slave  然后再指定master</description>
+    </item>
+    
+    <item>
+      <title>mongodb分片</title>
+      <link>/post/2018-09-26-mongodb%E5%88%86%E7%89%87/</link>
+      <pubDate>Tue, 25 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-26-mongodb%E5%88%86%E7%89%87/</guid>
+      <description>参考资料 官网术语glossary 官网Configuration File文档 官网教程tutorial 官网Replication文档 官网sharding文档 官网mongodb生态
+张友东的博客 【csdn】MongoDB 分片的原理、搭建、应用
+分片架构 一、分片（shard server） 配置文件sharding-config.yml systemLog: destination: file # 值只有三个syslog，console，file path: /data/db/mongo-standard.log #标准日志文件 logAppend: true #日志是否追加 storage: dbPath: /data/db/ #数据目录 # syncPeriodSecs: 60 #这个参数做好不要设置，使用默认设置就好，默认60秒 journal: enabled: true #是否开启日志刷入磁盘 commitIntervalMs: 200 #从磁盘刷入时间间隔，为毫秒 net: port: 27017 #启动端口 #processManagement: #fork: true #是否启用守护进程 #pidFilePath: /data/db/mongo.pid #mongos或mongod进程id文件，配合fork使用 replication: oplogSizeMB: 1000 #复制集操作日志oplog大小 # replSetName: name #复制集的名称，复制集必须要有一个名称 security: authorization: disabled #开启验证，默认disabled # mongod才有这个配置，mongos没有 sharding: clusterRole: shardsvr #分片集群角色，configsvr为配置服务器（默认启动端口 27019），shardsvr为分片服务器（默认启动端口 27018） archiveMovedChunks: false #true, 在move chunk 时，源 shard 会将迁移的 chunk 数据归档一份在数据目录里，会占用磁盘空间  三个片区  分片一：</description>
+    </item>
+    
+    <item>
+      <title>mongodb副本集（建议使用）</title>
+      <link>/post/2018-09-25-mongodb%E5%89%AF%E6%9C%AC%E9%9B%86%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Tue, 25 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-25-mongodb%E5%89%AF%E6%9C%AC%E9%9B%86%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/</guid>
+      <description>架构图  主节点挂了之后，会自动选举主节点
+ docker创建network driver为bridge，注意网段可能冲突
+docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为双节点 docker run -d -v ~/docker/test/mongo/test1/data/:/data/db -p 27001:27017 --ip 172.11.0.2 --name master_mongo --network mongo_network mongo:3.2 mongod --dbpath /data/db --replSet repl0 docker run -d -v ~/docker/test/mongo/test2/data/:/data/db -p 27002:27017 --ip 172.11.0.3 --name slave_mongo --network mongo_network mongo:3.2 mongod --dbpath /data/db --replSet repl0  初始化 rs.initiate({_id:&#39;repl0&#39;,members:[ {_id:0,host:&#39;172.11.0.2:27017&#39;}, {_id:1,host:&#39;172.11.0.3:27017&#39;}]})  添加新节点 # 添加新节点 rs.add(&#39;172.11.0.4:27017&#39;) # 添加选举节点 # rs.add(&#39;172.11.0.5:27017&#39;) # 刷新配置 rs.</description>
+    </item>
+    
+    <item>
+      <title>rinetd转发</title>
+      <link>/post/2018-09-23-rinetd-%E8%BD%AC%E5%8F%91/</link>
+      <pubDate>Sun, 23 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-23-rinetd-%E8%BD%AC%E5%8F%91/</guid>
+      <description>安装依赖库 yum -y install gcc automake autoconf libtool make
+安装 cat &amp;gt;&amp;gt; rinetd-installer.sh &amp;lt;&amp;lt;&#39;EOF&#39; #!/bin/bash wget http://www.boutell.com/rinetd/http/rinetd.tar.gz tar zxvf rinetd.tar.gz cd rinetd mkdir -p /usr/man/man8 make &amp;amp;&amp;amp; make install EOF chmod +x rinetd-installer.sh ./rinetd-installer.sh  配置 rm -f /etc/rinetd.conf cat &amp;gt;&amp;gt; /etc/rinetd.conf &amp;lt;&amp;lt;EOF # 设置允许访问的ip地址信息 allow 192.168.1.* # 设置日志文件路径 # logfile /var/log/rinetd.log # 例子: 将本机 8080 端口重定向至 www.baidu.com 的 80 端口 # 0.0.0.0 8080 www.baidu.com 80 EOF  启动 cat &amp;gt;&amp;gt; /etc/init.</description>
+    </item>
+    
+    <item>
+      <title>centos升级内核</title>
+      <link>/post/2018-09-21-centos%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/</link>
+      <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-21-centos%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/</guid>
+      <description>升级centos系统内核 https://www.howtoforge.com/tutorial/how-to-upgrade-kernel-in-centos-7-server/
+# ==== 查看信息 ==== # step 1 yum -y update # 安装镜像插件，加速下载 yum -y install yum-plugin-fastestmirror # step 2 # 查看centos版本 cat /etc/redhat-release cat /etc/os-release # 查看主机详情 uname -a # ==== 主要 ==== # step 3 # 添加镜像源地址 rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm yum repolist # step 4 # 开启新加的elrepo-kernel源可用，并安装内核 yum -y --enablerepo=elrepo-kernel install kernel-ml # 查看源列表 yum repolist all # step 5 # 查看有多少个版本内核 sudo awk -F\&#39; &#39;$1==&amp;quot;menuentry &amp;quot; {print i++ &amp;quot; : &amp;quot; $2}&#39; /etc/grub2.</description>
+    </item>
+    
+    <item>
+      <title>linux用户相关基础</title>
+      <link>/post/2018-09-23-linux%E7%94%A8%E6%88%B7%E7%9B%B8%E5%85%B3%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-23-linux%E7%94%A8%E6%88%B7%E7%9B%B8%E5%85%B3%E5%9F%BA%E7%A1%80/</guid>
+      <description>相关命令  useradd 添加用户 usermod 修改用户 userdel 删除用户 passwd 修改用户密码 groupadd 添加用户组 groupmod 更改用户组 groupdel 删除用户组 chmod 改变文件的权限, SUID, SGID, SBIT等等的特性 chgrp 改变文件所属群组 chown 改变文件拥有者 groups 查看自己在什么群组 newgrp 切换群组  准备  用docker起一个ssh服务端 docker run -d --name ssh-server -p 2020:22 jdeathe/centos-ssh:centos-7 进入容器修改为允许使用用户名密码登录
+# 进入容器 docker exec -ti ssh-server-1 bash # 修改配置 vi /etc/ssh/sshd_config # 将PasswordAuthentication的no改为yes # 查看sshd线程 ps aux | grep sshd # 刷新修改，即可用默认用户名跟密码登录 kill -1 ${pid}  通过docker logs ssh-server可以查看到, 默认用户名密码</description>
+    </item>
+    
+    <item>
+      <title>Jekyll markdown问题记录</title>
+      <link>/post/2018-01-01-jekyll-markdown%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-01-01-jekyll-markdown%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/</guid>
+      <description> jekyll支持的是kramdown，而kramdown是markdown的超集，所以两者之间肯定有不同的东西，特此记录下，方便以后遇到问题查看
+  Block-level元素就是显示HTML上的各个主成分,如段落, [Un]Order List等. Span-level元素就是成分的修饰,如强调, 粗体, 连接等. 对于一些block元素, 需要前面有空行(这和传统markdown不同), 例如header(## header), list, fenced code block, math code.【来自】
+ kramdown语法
+ 在Jekyll中遇到的一些markdown问题
+  </description>
+    </item>
+    
+  </channel>
+</rss>

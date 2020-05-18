@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>用户管理 on home</title>
+    <link>/tags/%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86/</link>
+    <description>Recent content in 用户管理 on home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 21 Sep 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>linux用户相关基础</title>
+      <link>/post/2018-09-23-linux%E7%94%A8%E6%88%B7%E7%9B%B8%E5%85%B3%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-23-linux%E7%94%A8%E6%88%B7%E7%9B%B8%E5%85%B3%E5%9F%BA%E7%A1%80/</guid>
+      <description>相关命令  useradd 添加用户 usermod 修改用户 userdel 删除用户 passwd 修改用户密码 groupadd 添加用户组 groupmod 更改用户组 groupdel 删除用户组 chmod 改变文件的权限, SUID, SGID, SBIT等等的特性 chgrp 改变文件所属群组 chown 改变文件拥有者 groups 查看自己在什么群组 newgrp 切换群组  准备  用docker起一个ssh服务端 docker run -d --name ssh-server -p 2020:22 jdeathe/centos-ssh:centos-7 进入容器修改为允许使用用户名密码登录
+# 进入容器 docker exec -ti ssh-server-1 bash # 修改配置 vi /etc/ssh/sshd_config # 将PasswordAuthentication的no改为yes # 查看sshd线程 ps aux | grep sshd # 刷新修改，即可用默认用户名跟密码登录 kill -1 ${pid}  通过docker logs ssh-server可以查看到, 默认用户名密码</description>
+    </item>
+    
+  </channel>
+</rss>

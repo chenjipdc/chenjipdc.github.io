@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hugo on home</title>
+    <link>/tags/hugo/</link>
+    <description>Recent content in Hugo on home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 09 Apr 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Hugo</title>
+      <link>/post/2019-04-09-hugo/</link>
+      <pubDate>Tue, 09 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-04-09-hugo/</guid>
+      <description>什么是hugo？ Hugo是由Go语言实现的静态网站生成器。简单、易用、高效、易扩展、快速部署。
+安装hugo github上各版本
+mac安装 brew insall hugo
+linux安装 cd /data/pkg/ wget https://github.com/gohugoio/hugo/releases/download/v0.55.0/hugo_0.55.0_Linux-64bit.tar.gz tar -vxf hugo_0.55.0_Linux-64bit.tar.gz ln -s /data/pkg/hugo /usr/local/bin/hugo ln -s /usr/local/bin/hugo /bin/hugo  源码安装 下载源码，go build相关命令即可编译出，不详细操作。
+使用hugo 使用帮助：hugo --help
+本地website：hugo server --theme=mainroad --bind=0.0.0.0，需要建立content文件夹放.md文件。
+生成静态网页部署到个人站点：hugo --theme=mainroad，静态网页在publish文件夹内，可放到github仓库根目录作为个人站点使用。
+ &amp;ndash;theme 为主题名称
+ hugo themes 主题地址，主题比较丰富，文档也较全，一般参考主题下的demo配置即可。如需熟练使用，还需熟悉hugo官方各文档，体验各主题之间差异，亦或自己构建主题都可。
+hugo参数介绍参考 官网参数介绍，参数较多，各主题使用参数基本类似。
+hugo使用mainroad主题 mainroad 文档
+mainroad集成google统计 只需在配置文件config.toml配置googleAnalytics = &amp;quot;xxx&amp;quot;参数即可，xxx为google tracking id。配置好后即可统计网站流量。
+mainroad集成Disqus 只需在配置文件config.toml配置disqusShortname = &amp;quot;xxx&amp;quot;参数即可，xxx为disqus的short name。配置好后，即可开启评论回复等功能。 效果图: .md文件配置示例 --- title: &amp;quot;(Hu)go Template Primer&amp;quot; date: 2014-04-02 thumbnail: &amp;quot;img/placeholder.</description>
+    </item>
+    
+  </channel>
+</rss>

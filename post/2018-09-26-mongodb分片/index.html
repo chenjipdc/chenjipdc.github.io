@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>mongodb分片 - home</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<meta name="generator" content="Hugo 0.54.0" />
+	<meta property="og:title" content="mongodb分片" />
+<meta property="og:description" content="参考资料 官网术语glossary 官网Configuration File文档 官网教程tutorial 官网Replication文档 官网sharding文档 官网mongodb生态
+张友东的博客 【csdn】MongoDB 分片的原理、搭建、应用
+分片架构 一、分片（shard server） 配置文件sharding-config.yml systemLog: destination: file # 值只有三个syslog，console，file path: /data/db/mongo-standard.log #标准日志文件 logAppend: true #日志是否追加 storage: dbPath: /data/db/ #数据目录 # syncPeriodSecs: 60 #这个参数做好不要设置，使用默认设置就好，默认60秒 journal: enabled: true #是否开启日志刷入磁盘 commitIntervalMs: 200 #从磁盘刷入时间间隔，为毫秒 net: port: 27017 #启动端口 #processManagement: #fork: true #是否启用守护进程 #pidFilePath: /data/db/mongo.pid #mongos或mongod进程id文件，配合fork使用 replication: oplogSizeMB: 1000 #复制集操作日志oplog大小 # replSetName: name #复制集的名称，复制集必须要有一个名称 security: authorization: disabled #开启验证，默认disabled # mongod才有这个配置，mongos没有 sharding: clusterRole: shardsvr #分片集群角色，configsvr为配置服务器（默认启动端口 27019），shardsvr为分片服务器（默认启动端口 27018） archiveMovedChunks: false #true, 在move chunk 时，源 shard 会将迁移的 chunk 数据归档一份在数据目录里，会占用磁盘空间  三个片区  分片一：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/post/2018-09-26-mongodb%E5%88%86%E7%89%87/" />
+<meta property="article:published_time" content="2018-09-25T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2018-09-25T00:00:00&#43;00:00"/>
+
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="home" rel="home">
+				<div class="logo__title">home</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/post/2019-04-13-vim%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/">vim常规使用</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">mongodb分片</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-09-25T00:00:00">2018-09-25</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93" rel="category">数据库</a></span>
+</div>
+</div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#参考资料">参考资料</a></li>
+<li><a href="#分片架构">分片架构</a></li>
+<li><a href="#一-分片-shard-server">一、分片（shard server）</a>
+<ul>
+<li><a href="#配置文件sharding-config-yml">配置文件sharding-config.yml</a></li>
+<li><a href="#三个片区">三个片区</a></li>
+</ul></li>
+<li><a href="#二-配置-config-servers">二、配置（config servers）</a>
+<ul>
+<li><a href="#配置文件config-config-yml">配置文件config-config.yml</a></li>
+<li><a href="#三个配置">三个配置</a></li>
+</ul></li>
+<li><a href="#三-路由-router-server">三、路由（router server）</a>
+<ul>
+<li><a href="#配置文件router-config-yml">配置文件router-config.yml：</a></li>
+<li><a href="#两个配置">两个配置</a></li>
+<li><a href="#查看状态">查看状态</a></li>
+<li><a href="#添加分片">添加分片</a></li>
+<li><a href="#数据库启用分片">数据库启用分片</a></li>
+<li><a href="#集合启用分片-启用之后会自动进行分片-将之前的数据自动迁移到各个片区">集合启用分片（启用之后会自动进行分片，将之前的数据自动迁移到各个片区）</a></li>
+<li><a href="#删除非主分片">删除非主分片</a></li>
+<li><a href="#切换主分片-删除主分片可用">切换主分片(删除主分片可用)</a></li>
+<li><a href="#chunk">chunk</a></li>
+</ul></li>
+<li><a href="#设置分片自动均衡时间窗口">设置分片自动均衡时间窗口</a></li>
+<li><a href="#分片配置密码">分片配置密码</a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<h2 id="参考资料">参考资料</h2>
+
+<p><a href="https://docs.mongodb.com/v3.2/reference/glossary/">官网术语glossary</a>
+<a href="https://docs.mongodb.com/v3.2/reference/configuration-options/">官网Configuration File文档</a>
+<a href="https://docs.mongodb.com/manual/tutorial/">官网教程tutorial</a>
+<a href="https://docs.mongodb.com/v3.2/replication/">官网Replication文档</a>
+<a href="https://docs.mongodb.com/v3.2/sharding/">官网sharding文档</a>
+<a href="https://docs.mongodb.com/ecosystem/">官网mongodb生态</a></p>
+
+<p><a href="http://www.mongoing.com/zyd">张友东的博客</a>
+<a href="http://www.cnblogs.com/zhoujinyi/p/4635444.html">【csdn】MongoDB 分片的原理、搭建、应用</a></p>
+
+<h2 id="分片架构">分片架构</h2>
+
+<p><img src="https://docs.mongodb.com/manual/_images/sharded-cluster-production-architecture.bakedsvg.svg" alt="mongo shading" /></p>
+
+<hr />
+
+<h2 id="一-分片-shard-server">一、分片（shard server）</h2>
+
+<h3 id="配置文件sharding-config-yml">配置文件sharding-config.yml</h3>
+
+<pre><code class="language-yml">systemLog:
+  destination: file # 值只有三个syslog，console，file
+  path: /data/db/mongo-standard.log #标准日志文件
+  logAppend: true #日志是否追加
+
+storage:
+   dbPath: /data/db/  #数据目录
+   # syncPeriodSecs: 60 #这个参数做好不要设置，使用默认设置就好，默认60秒
+   journal:
+    enabled: true #是否开启日志刷入磁盘
+    commitIntervalMs: 200 #从磁盘刷入时间间隔，为毫秒
+
+net:
+  port: 27017 #启动端口
+
+#processManagement:
+  #fork: true  #是否启用守护进程
+  #pidFilePath: /data/db/mongo.pid #mongos或mongod进程id文件，配合fork使用
+
+
+replication:
+  oplogSizeMB: 1000 #复制集操作日志oplog大小
+  # replSetName: name #复制集的名称，复制集必须要有一个名称
+
+security:
+  authorization: disabled #开启验证，默认disabled
+
+# mongod才有这个配置，mongos没有
+sharding:
+  clusterRole: shardsvr #分片集群角色，configsvr为配置服务器（默认启动端口 27019），shardsvr为分片服务器（默认启动端口 27018）
+  archiveMovedChunks: false #true, 在move chunk 时，源 shard 会将迁移的 chunk 数据归档一份在数据目录里，会占用磁盘空间
+</code></pre>
+
+<h3 id="三个片区">三个片区</h3>
+
+<ul>
+<li><p><strong>分片一：</strong></p>
+
+<pre><code class="language-sh">docker run -d --name=mongo_shard1 -p 27025:27017 -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/shard1/conf:/data/configdb -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/shard1/db:/data/db --network=mongo_test --ip=172.10.0.205 mongo:3.2 mongod -f /data/configdb/sharding-config.yml
+</code></pre></li>
+
+<li><p><strong>分片二：</strong></p>
+
+<pre><code class="language-sh">docker run -d --name=mongo_shard2 -p 27026:27017 -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/shard2/conf:/data/configdb -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/shard2/db:/data/db --network=mongo_test --ip=172.10.0.206 mongo:3.2 mongod -f /data/configdb/sharding-config.yml
+</code></pre></li>
+
+<li><p><strong>分片三：</strong></p>
+
+<pre><code class="language-sh">docker run -d --name=mongo_shard3 -p 27027:27017 -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/shard3/conf:/data/configdb -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/shard3/db:/data/db --network=mongo_test --ip=172.10.0.207 mongo:3.2 mongod -f /data/configdb/sharding-config.yml
+</code></pre></li>
+</ul>
+
+<hr />
+
+<h2 id="二-配置-config-servers">二、配置（config servers）</h2>
+
+<p><strong>只配置一个config的时候，起mongos时会有警告，配置两个会报错，大于三个也会报错，必须要为3个或者是副本集模式</strong></p>
+
+<blockquote>
+<p>起一个config时，再起router的警告：</p>
+
+<pre><code>2018-05-23T11:36:40.377+0000 W SHARDING [main] Running a sharded cluster with fewer than 3 config servers should only be done for testing purposes and is not recommended for production.
+</code></pre>
+</blockquote>
+
+<p><em>(建议生产环境不要部署一台，应该为3台或者复制集模式；测试环境则可以，搭建方便)</em></p>
+
+<h3 id="配置文件config-config-yml">配置文件config-config.yml</h3>
+
+<pre><code class="language-yml">systemLog:
+  destination: file # 值只有三个syslog，console，file
+  path: /data/db/mongo-standard.log #标准日志文件
+  logAppend: true #日志是否追加
+
+storage:
+   dbPath: /data/db/  #数据目录
+   # syncPeriodSecs: 60 #这个参数做好不要设置，使用默认设置就好，默认60秒
+   journal:
+    enabled: true #是否开启日志刷入磁盘
+    commitIntervalMs: 200 #从磁盘刷入时间间隔，为毫秒
+
+net:
+  port: 27017 #启动端口
+
+#processManagement:
+  #fork: true  #是否启用守护进程
+  #pidFilePath: /data/db/mongo.pid #mongos或mongod进程id文件，配合fork使用
+
+
+replication:
+  oplogSizeMB: 1000 #复制集操作日志oplog大小
+  # replSetName: name #复制集的名称，复制集必须要有一个名称
+
+security:
+  authorization: disabled #开启验证，默认disabled
+
+# mongod才有这个配置，mongos没有
+sharding:
+  clusterRole: configsvr #分片集群角色，configsvr为配置服务器（默认启动端口 27019），shardsvr为分片服务器（默认启动端口 27018）
+  archiveMovedChunks: false #true, 在move chunk 时，源 shard 会将迁移的 chunk 数据归档一份在数据目录里，会占用磁盘空间
+</code></pre>
+
+<h3 id="三个配置">三个配置</h3>
+
+<ul>
+<li>配置1<br>
+<code>sh
+docker run -d --name=mongo_config1 -p 27020:27017 -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/config1/conf:/data/configdb -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/config1/db:/data/db --network=mongo_test --ip=172.10.0.200 mongo:3.2 mongod -f /data/configdb/config-config.yml
+</code></li>
+<li>配置2<br>
+<code>sh
+docker run -d --name=mongo_config2 -p 27021:27017 -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/config2/conf:/data/configdb -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/config2/db:/data/db --network=mongo_test --ip=172.10.0.201 mongo:3.2 mongod -f /data/configdb/config-config.yml
+</code></li>
+<li>配置3<br>
+<code>
+docker run -d --name=mongo_config3 -p 27022:27017 -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/config3/conf:/data/configdb -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/config3/db:/data/db --network=mongo_test --ip=172.10.0.202 mongo:3.2 mongod -f /data/configdb/config-config.yml
+</code></li>
+</ul>
+
+<hr />
+
+<h2 id="三-路由-router-server">三、路由（router server）</h2>
+
+<h3 id="配置文件router-config-yml">配置文件router-config.yml：</h3>
+
+<pre><code class="language-yaml">systemLog:
+  destination: file # 值只有三个syslog，console，file
+  path: /data/db/mongos-standard.log #标准日志文件
+  logAppend: true #日志是否追加
+
+net:
+  port: 27017
+  maxIncomingConnections: 65536 #连接数，默认65536
+
+# 以下属性mongos才有
+#replication:
+ #  localPingThresholdMs: 15
+sharding:
+  autoSplit: true #默认值为true
+  configDB: 172.10.0.200:27017,172.10.0.201:27017,172.10.0.202:27017
+  chunkSize: 64 #区块的大小，默认64，最好不要修改
+</code></pre>
+
+<h3 id="两个配置">两个配置</h3>
+
+<ul>
+<li>配置1<br>
+<code>sh
+docker run -d  --name=mongo_router1 -p 27023:27017 -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/router1/conf:/data/configdb --network=mongo_test --ip=172.10.0.203 mongo:3.2 mongos -f /data/configdb/router-config.yml
+</code></li>
+<li>配置2<br>
+<code>sh
+docker run -d --name=mongo_router2 -p 27024:27017 -v /Users/cj/Documents/pdc/docker/test/mongo-sharding/router2/conf:/data/configdb --network=mongo_test --ip=172.10.0.204 mongo:3.2 mongos -f /data/configdb/router-config.yml
+</code></li>
+</ul>
+
+<h3 id="查看状态">查看状态</h3>
+
+<pre><code class="language-sh">sh.status()
+</code></pre>
+
+<h3 id="添加分片">添加分片</h3>
+
+<p><em>添加分片前可在分片机将集合数据恢复，添加分片后则不能在分片机恢复数据。需要在router机上恢复数据。</em></p>
+
+<pre><code class="language-sh">sh.addShard(&quot;172.10.0.205:27017&quot;)
+sh.addShard(&quot;172.10.0.206:27017&quot;)
+sh.addShard(&quot;172.10.0.207:27017&quot;)
+</code></pre>
+
+<h3 id="数据库启用分片">数据库启用分片</h3>
+
+<p><code>sh.enableSharding(&quot;mongo_test&quot;)</code></p>
+
+<h3 id="集合启用分片-启用之后会自动进行分片-将之前的数据自动迁移到各个片区">集合启用分片（启用之后会自动进行分片，将之前的数据自动迁移到各个片区）</h3>
+
+<p><code>sh.shardCollection(&quot;mongo_test.LogModel2&quot;, {&quot;internalRequestId&quot;: 1})</code></p>
+
+<h3 id="删除非主分片">删除非主分片</h3>
+
+<ol>
+<li><p>看是否开启自动分片
+<code>sh.getBalancerState()</code></p></li>
+
+<li><p>删除
+<code>db.runCommand( { removeShard: &quot;repl_shard1&quot; } )</code>
+<em>如果删的是主分片会有警告：you need to drop or movePrimary these databases</em></p></li>
+
+<li><p>确认是否删除完成(删除分片时一直重复执行删除命令，直到state为completed)</p>
+
+<pre><code class="language-sh">mongos&gt; db.runCommand( { removeShard: &quot;repl_shard1&quot; } )
+{
+	&quot;msg&quot; : &quot;removeshard completed successfully&quot;,
+	&quot;state&quot; : &quot;completed&quot;,
+	&quot;shard&quot; : &quot;repl_shard1&quot;,
+	&quot;ok&quot; : 1
+}
+</code></pre></li>
+</ol>
+
+<h3 id="切换主分片-删除主分片可用">切换主分片(删除主分片可用)</h3>
+
+<pre><code class="language-sh">db.runCommand( { movePrimary: &quot;数据库名称&quot;, to: &quot;分片名称&quot; })
+</code></pre>
+
+<h3 id="chunk">chunk</h3>
+
+<p>1.<strong>特大chunk</strong></p>
+
+<pre><code>&gt; 在有些情况下，chunk会持续增长，超出chunk size的限制，成为特大块（jumbo chunk），出现特大块的原因是chunk中的所有doc使用同一个片键（shard key），导致MongoDB无法拆分该chunk，如果该chunk持续增长，将会导致chunk的分布不均匀，成为性能瓶颈。
+
+使用sh.status()，能够发现特大块，特大块的后面存在 jumbo 标志
+</code></pre>
+
+<p>2.<strong>迁移chunk</strong></p>
+
+<ul>
+<li>mongos 关闭均衡器：sh.setBalancerState(false)</li>
+<li>迁移：sh.moveChunk(&ldquo;mongo_test.LogModel2&rdquo;,{&ldquo;internalRequestId&rdquo;:&ldquo;4800032ceace4df29eaac0e195c32833&rdquo;},&ldquo;repl_shard3&rdquo;)</li>
+<li>mongos 启动均衡器：sh.setBalancerState(true)</li>
+</ul>
+
+<p>3.<strong>修改chunk的大小</strong></p>
+
+<blockquote>
+<p>config 更新配置</p>
+
+<pre><code class="language-sh">use admin
+db.settings.save({&quot;_id&quot;:&quot;chunksize&quot;,&quot;value&quot;:32})
+</code></pre>
+
+<p>mongos 刷新</p>
+
+<pre><code class="language-sh">db.adminCommand({ flushRouterConfig: 1 } )
+</code></pre>
+</blockquote>
+
+<h2 id="设置分片自动均衡时间窗口">设置分片自动均衡时间窗口</h2>
+
+<pre><code class="language-sh">use config
+# 开启
+db.settings.update(
+   { _id: &quot;balancer&quot; },
+   { $set: { activeWindow : { start : &quot;&lt;start-time&gt;&quot;, stop : &quot;&lt;stop-time&gt;&quot; } } },
+   { upsert: true }
+)
+----
+    Replace &lt;start-time&gt; and &lt;end-time&gt; with time values using two digit hour and minute values (i.e. HH:MM) that specify the beginning and end boundaries of the balancing window.
+    - For HH values, use hour values ranging from 00 - 23.
+    - For MM value, use minute values ranging from 00 - 59.
+----
+
+# 关闭
+db.settings.update({ _id : &quot;balancer&quot; }, { $unset : { activeWindow : true } })
+</code></pre>
+
+<h2 id="分片配置密码">分片配置密码</h2>
+
+<p>1.生成集群间相互访问keyfile，将此文件同步拷贝到各机器下：
+    <code>openssl rand -base64 753 &gt; keyfile</code>
+    权限修改为400
+    <code>chmod 400 keyfile</code>
+2.创建各mongod用户</p>
+
+<ul>
+<li>配置文件先关闭验证
+<code>sh
+security:
+#keyFile: /data/configdb/keyFile #集群验证文件
+#authorization: enabled #开启验证，默认disabled
+authorization: disabled #开启验证，默认disabled
+</code></li>
+<li>创建管理员用户（其他数据库用户可以在创建完管理员开启验证账户之后再设置）
+<code>sh
+use admin
+db.createUser(
+{
+user:&quot;root&quot;,
+pwd:&quot;root&quot;,
+roles:[{role:&quot;root&quot;,db:&quot;admin&quot;}]
+})
+</code></li>
+</ul>
+
+<p>3.开启验证
+- mongod配置</p>
+
+<pre><code class="language-sh">  security:
+    keyFile: /data/configdb/keyFile #集群验证文件
+    authorization: enabled #开启验证，默认disabled
+    #authorization: disabled #开启验证，默认disabled
+</code></pre>
+
+<ul>
+<li>mongos配置，不需要authorization参数，因为mongos访问其他数据库是需要验证的
+<code>sh
+security:
+keyFile: /data/configdb/keyFile #集群验证文件
+</code></li>
+<li>依次重启config-servers，sharding，mongos即可</li>
+</ul>
+
+		</div>
+		
+<div class="post__tags tags clearfix">
+	<svg class="tags__icon icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item"><a class="tags__link btn" href="/tags/mongodb/" rel="tag">mongodb</a></li>
+	</ul>
+</div>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<div class="authorbox__header">
+		<span class="authorbox__name">About pdc</span>
+	</div>
+	<div class="authorbox__description">
+		Pdc&#39;s true identity is unknown. Maybe he is a successful engineer or doctor. Nobody knows it.
+	</div>
+</div>
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/2018-09-25-mongodb%E5%89%AF%E6%9C%AC%E9%9B%86%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">mongodb副本集（建议使用）</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/2018-09-25-mongodb%E4%B8%BB%E4%BB%8E%E4%B8%8D%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">mongodb主从(不建议使用)</p></a>
+	</div>
+</nav>
+
+<section class="comments">
+	<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "chenjipdc" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+			</div>
+			<aside class="sidebar"><div class="widget-search widget">
+	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
+		<label>
+			<input class="widget-search__field" type="search" placeholder="SEARCH..." value="" name="q" aria-label="SEARCH...">
+		</label>
+		<input class="widget-search__submit" type="submit" value="Search">
+		<input type="hidden" name="sitesearch" value="/" />
+	</form>
+</div>
+<div class="widget-recent widget">
+	<h4 class="widget__title">Recent Posts</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/post/2019-04-14-awk%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/">awk常规使用</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/2019-04-13-vim%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/">vim常规使用</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/2019-04-09-hugo/">Hugo</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/categories/install">Install</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/linux">Linux</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/markdown">Markdown</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/monitor">Monitor</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/tips">Tips</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93">数据库</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Tags</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/awk" title="Awk">Awk (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/centos" title="Centos">Centos (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/hugo" title="Hugo">Hugo (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/jekyll" title="Jekyll">Jekyll (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/mongodb" title="Mongodb">Mongodb (3)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/mysql" title="Mysql">Mysql (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/vim" title="Vim">Vim (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e5%b7%a5%e5%85%b7" title="工具">工具 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e7%94%a8%e6%88%b7%e7%ae%a1%e7%90%86" title="用户管理">用户管理 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e7%9b%91%e6%8e%a7" title="监控">监控 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e8%b5%84%e6%96%99" title="资料">资料 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e8%bd%ac%e5%8f%91" title="转发">转发 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e8%bd%af%e4%bb%b6" title="软件">软件 (1)</a>
+	</div>
+</div>
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/chenjipdc" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:chenjipdc@gmail.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>chenjipdc@gmail.com</span>
+			</a>
+		</div>
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 pdc.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

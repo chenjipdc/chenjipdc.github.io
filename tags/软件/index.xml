@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>软件 on home</title>
+    <link>/tags/%E8%BD%AF%E4%BB%B6/</link>
+    <description>Recent content in 软件 on home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 08 Apr 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/%E8%BD%AF%E4%BB%B6/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>常用软件、工具安装</title>
+      <link>/post/2019-04-08-%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Mon, 08 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-04-08-%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/</guid>
+      <description>其他工具 mac  brew install ruby - 替换系统默认的ruby环境，不然很多操作都要加sudo brew install nginx brew install automake brew install iproute2mac - 替换net-tools工具 brew install openssl brew install jq - json处理 brew install glide - go包管理工具 brew install mariadb - mysql客户端 brew install tldr - 查看命令示例，man的文档太长 brew install fd - find命令的升级版，更加高效 brew install http - curl、wget工具的替换，like tool for humans brew install tmux - 类screen  centos  yum install epel-release - 安装最新软件包源 yum install -y nginx yum install -y lsof telnet tcpdump iproute2 yum install -y mariadb - mysql客户端 yum install -y &amp;quot;Development Tools&amp;quot; - 开发工具包  ubuntu  apt-get install iputils-ping  alpine  apk add busybox-extras  git  npm install -g commitizen - commit规范化  安装docker-ce 脚本一键安装 curl -fsSL https://get.</description>
+    </item>
+    
+  </channel>
+</rss>

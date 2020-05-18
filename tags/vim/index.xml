@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Vim on home</title>
+    <link>/tags/vim/</link>
+    <description>Recent content in Vim on home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 13 Apr 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/vim/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>vim常规使用</title>
+      <link>/post/2019-04-13-vim%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Sat, 13 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-04-13-vim%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/</guid>
+      <description>参考coolshell：https://coolshell.cn/articles/5426.html
+vim tutorial：vimtutor
+ 基础操作  i、a - 光标处、后插入 o、O - 光标行后、前一行插入 x - 删除光标后一个字符 r、R - 替换一个、多个字符 dd - 删除当前行 p - 粘贴 yy - 拷贝当前行 u - undo ctrl + r - redo ctrl + b、ctrl + f - 上一页、下一页 ctrl + u、ctrl + d - 上半页、下半页 ctrl + y、ctrl + e - 向上、下滚动一行 :s /old/new 、:s /old/new/g- 当前行第一个、所有old字符换为new字符 :% s/old/new/g - 整个文件替换字符old为new esc - 退出编辑模式，回到normal模式  光标移动  hjkl - 分别对应←↓↑→ w、W - 到下一个单词开头，W到下一个单词（遇到blank后）开头 e、E - 到单词结尾，E到单词（直到遇到blank）结尾 b、B - 到单词开头，B到单词（直到遇到blank）开头 0 - 回行头 ^|_ - 到非blank字符行头 +和- - 移动到下一行开头、上一行开头 $ - 到行尾 g_ - 到非blank字符行尾 gg|1G|:1 - 回到文件第一行 G - 到文件最尾一行 NG|:N|Ngg - 到第N行 *、# - 匹配光标当前单词上一个(#)和下一个(*) % - 括号间移动，匹配(){}[]，需把光标放到括号上 fh - 移动光标到下一个字符为h的地方，Nfh为下N个 th - 移动光标到下一个字符为h的前一个字符，Nth为下N个 z - 将光标行移动到屏幕顶端 z.</description>
+    </item>
+    
+  </channel>
+</rss>

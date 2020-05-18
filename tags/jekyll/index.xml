@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jekyll on home</title>
+    <link>/tags/jekyll/</link>
+    <description>Recent content in Jekyll on home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 01 Jan 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/jekyll/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Jekyll markdown问题记录</title>
+      <link>/post/2018-01-01-jekyll-markdown%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-01-01-jekyll-markdown%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/</guid>
+      <description> jekyll支持的是kramdown，而kramdown是markdown的超集，所以两者之间肯定有不同的东西，特此记录下，方便以后遇到问题查看
+  Block-level元素就是显示HTML上的各个主成分,如段落, [Un]Order List等. Span-level元素就是成分的修饰,如强调, 粗体, 连接等. 对于一些block元素, 需要前面有空行(这和传统markdown不同), 例如header(## header), list, fenced code block, math code.【来自】
+ kramdown语法
+ 在Jekyll中遇到的一些markdown问题
+  </description>
+    </item>
+    
+  </channel>
+</rss>

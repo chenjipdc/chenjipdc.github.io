@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mongodb on home</title>
+    <link>/tags/mongodb/</link>
+    <description>Recent content in Mongodb on home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 25 Sep 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/mongodb/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>mongodb主从(不建议使用)</title>
+      <link>/post/2018-09-25-mongodb%E4%B8%BB%E4%BB%8E%E4%B8%8D%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Tue, 25 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-25-mongodb%E4%B8%BB%E4%BB%8E%E4%B8%8D%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/</guid>
+      <description>参考资料 官网 master-slave
+mongodb的主从要注意的事项  主服务器挂掉，从服务器不会自动取代主服务器。 主服务器挂掉后重启，从服务器则会重新同步数据，之前同步过来的数据被初始化。 综合以上两点，mongodb要随时做好数据备份，以免造成无法弥补的数据丢失！！！  master docker run -v ~/docker/test/mongo/test1/data/:/data/db -p 27001:27017 --name master_mongo --network docker_default mongo:3.2 mongod --dbpath /data/db --master  slave docker run -v ~/docker/test/mongo/test2/data/:/data/db -p 27002:27017 --name slave_mongo --network docker_default mongo:3.2 mongod --dbpath /data/db --slave --source 192.168.1.222:27001   &amp;ndash;only 可指定database &amp;ndash;slavedelay &amp;ndash;fastsyn &amp;ndash;aoturesync &amp;ndash;oplogSize   也可先创建从节点(slave)
+docker run -v ~/docker/test/mongo/test3/data/:/data/db -p 27003:27017 --name slave1_mongo --network docker_default mongo:3.2 mongod --dbpath /data/db --slave  然后再指定master</description>
+    </item>
+    
+    <item>
+      <title>mongodb分片</title>
+      <link>/post/2018-09-26-mongodb%E5%88%86%E7%89%87/</link>
+      <pubDate>Tue, 25 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-26-mongodb%E5%88%86%E7%89%87/</guid>
+      <description>参考资料 官网术语glossary 官网Configuration File文档 官网教程tutorial 官网Replication文档 官网sharding文档 官网mongodb生态
+张友东的博客 【csdn】MongoDB 分片的原理、搭建、应用
+分片架构 一、分片（shard server） 配置文件sharding-config.yml systemLog: destination: file # 值只有三个syslog，console，file path: /data/db/mongo-standard.log #标准日志文件 logAppend: true #日志是否追加 storage: dbPath: /data/db/ #数据目录 # syncPeriodSecs: 60 #这个参数做好不要设置，使用默认设置就好，默认60秒 journal: enabled: true #是否开启日志刷入磁盘 commitIntervalMs: 200 #从磁盘刷入时间间隔，为毫秒 net: port: 27017 #启动端口 #processManagement: #fork: true #是否启用守护进程 #pidFilePath: /data/db/mongo.pid #mongos或mongod进程id文件，配合fork使用 replication: oplogSizeMB: 1000 #复制集操作日志oplog大小 # replSetName: name #复制集的名称，复制集必须要有一个名称 security: authorization: disabled #开启验证，默认disabled # mongod才有这个配置，mongos没有 sharding: clusterRole: shardsvr #分片集群角色，configsvr为配置服务器（默认启动端口 27019），shardsvr为分片服务器（默认启动端口 27018） archiveMovedChunks: false #true, 在move chunk 时，源 shard 会将迁移的 chunk 数据归档一份在数据目录里，会占用磁盘空间  三个片区  分片一：</description>
+    </item>
+    
+    <item>
+      <title>mongodb副本集（建议使用）</title>
+      <link>/post/2018-09-25-mongodb%E5%89%AF%E6%9C%AC%E9%9B%86%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Tue, 25 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-09-25-mongodb%E5%89%AF%E6%9C%AC%E9%9B%86%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/</guid>
+      <description>架构图  主节点挂了之后，会自动选举主节点
+ docker创建network driver为bridge，注意网段可能冲突
+docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为双节点 docker run -d -v ~/docker/test/mongo/test1/data/:/data/db -p 27001:27017 --ip 172.11.0.2 --name master_mongo --network mongo_network mongo:3.2 mongod --dbpath /data/db --replSet repl0 docker run -d -v ~/docker/test/mongo/test2/data/:/data/db -p 27002:27017 --ip 172.11.0.3 --name slave_mongo --network mongo_network mongo:3.2 mongod --dbpath /data/db --replSet repl0  初始化 rs.initiate({_id:&#39;repl0&#39;,members:[ {_id:0,host:&#39;172.11.0.2:27017&#39;}, {_id:1,host:&#39;172.11.0.3:27017&#39;}]})  添加新节点 # 添加新节点 rs.add(&#39;172.11.0.4:27017&#39;) # 添加选举节点 # rs.add(&#39;172.11.0.5:27017&#39;) # 刷新配置 rs.</description>
+    </item>
+    
+  </channel>
+</rss>
