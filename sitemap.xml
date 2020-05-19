@@ -3,6 +3,16 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/post/2020-05-16-hdfs%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/</loc>
+    <lastmod>2020-05-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/2020-05-16-yarn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/</loc>
+    <lastmod>2020-05-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/2019-04-14-awk%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/</loc>
     <lastmod>2019-04-15T00:00:00+00:00</lastmod>
   </url>
@@ -95,6 +105,18 @@
   </url>
   
   <url>
+    <loc>/categories/hadoop/</loc>
+    <lastmod>2020-05-16T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/hdfs/</loc>
+    <lastmod>2020-05-16T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/tags/hugo/</loc>
     <lastmod>2019-04-09T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -144,7 +166,7 @@
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2019-04-15T00:00:00+00:00</lastmod>
+    <lastmod>2020-05-16T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -167,8 +189,14 @@
   </url>
   
   <url>
+    <loc>/tags/yarn/</loc>
+    <lastmod>2020-05-16T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/</loc>
-    <lastmod>2019-04-15T00:00:00+00:00</lastmod>
+    <lastmod>2020-05-16T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

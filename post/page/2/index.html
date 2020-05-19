@@ -13,7 +13,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="/post/" />
 
-<meta property="og:updated_time" content="2018-09-23T00:00:00&#43;00:00"/>
+<meta property="og:updated_time" content="2018-09-25T00:00:00&#43;00:00"/>
 
 	
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
@@ -56,6 +56,60 @@
 	<header class="main__header">
 		<h1 class="main__title">Posts</h1>
 	</header><article class="list__item post">
+	<header class="list__header">
+		<h3 class="list__title post__title ">
+			<a href="/post/2018-09-26-mongodb%E5%88%86%E7%89%87/" rel="bookmark">
+			mongodb分片
+			</a>
+		</h3>
+		<div class="list__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-09-25T00:00:00">2018-09-25</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93" rel="category">数据库</a></span>
+</div>
+</div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		参考资料 官网术语glossary 官网Configuration File文档 官网教程tutorial 官网Replication文档 官网sharding文档 官网mongodb生态
+张友东的博客 【csdn】MongoDB 分片的原理、搭建、应用
+分片架构 一、分片（shard server） 配置文件sharding-config.yml systemLog: destination: file # 值只有三个syslog，console，file path: /data/db/mongo-standard.log #标准日志文件 logAppend: true #日志是否追加 storage: dbPath: /data/db/ #数据目录 # syncPeriodSecs: 60 #这个参数做好不要设置，使用默认设置就好，默认60秒 journal: enabled: true #是否开启日志刷入磁盘 commitIntervalMs: 200 #从磁盘刷入时间间隔，为毫秒 net: port: 27017 #启动端口 #processManagement: #fork: true #是否启用守护进程 #pidFilePath: /data/db/mongo.pid #mongos或mongod进程id文件，配合fork使用 replication: oplogSizeMB: 1000 #复制集操作日志oplog大小 # replSetName: name #复制集的名称，复制集必须要有一个名称 security: authorization: disabled #开启验证，默认disabled # mongod才有这个配置，mongos没有 sharding: clusterRole: shardsvr #分片集群角色，configsvr为配置服务器（默认启动端口 27019），shardsvr为分片服务器（默认启动端口 27018） archiveMovedChunks: false #true, 在move chunk 时，源 shard 会将迁移的 chunk 数据归档一份在数据目录里，会占用磁盘空间  三个片区  分片一：
+	</div>
+	<div class="list__footer clearfix">
+		<a class="list__footer-readmore btn" href="/post/2018-09-26-mongodb%E5%88%86%E7%89%87/">Read more…</a>
+	</div>
+</article><article class="list__item post">
+	<header class="list__header">
+		<h3 class="list__title post__title ">
+			<a href="/post/2018-09-25-mongodb%E5%89%AF%E6%9C%AC%E9%9B%86%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/" rel="bookmark">
+			mongodb副本集（建议使用）
+			</a>
+		</h3>
+		<div class="list__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-09-25T00:00:00">2018-09-25</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93" rel="category">数据库</a></span>
+</div>
+</div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		架构图  主节点挂了之后，会自动选举主节点
+ docker创建network driver为bridge，注意网段可能冲突
+docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为双节点 docker run -d -v ~/docker/test/mongo/test1/data/:/data/db -p 27001:27017 --ip 172.11.0.2 --name master_mongo --network mongo_network mongo:3.2 mongod --dbpath /data/db --replSet repl0 docker run -d -v ~/docker/test/mongo/test2/data/:/data/db -p 27002:27017 --ip 172.11.0.3 --name slave_mongo --network mongo_network mongo:3.2 mongod --dbpath /data/db --replSet repl0  初始化 rs.initiate({_id:'repl0',members:[ {_id:0,host:'172.11.0.2:27017'}, {_id:1,host:'172.11.0.3:27017'}]})  添加新节点 # 添加新节点 rs.add('172.11.0.4:27017') # 添加选举节点 # rs.add('172.11.0.5:27017') # 刷新配置 rs.
+	</div>
+	<div class="list__footer clearfix">
+		<a class="list__footer-readmore btn" href="/post/2018-09-25-mongodb%E5%89%AF%E6%9C%AC%E9%9B%86%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/">Read more…</a>
+	</div>
+</article><article class="list__item post">
 	<header class="list__header">
 		<h3 class="list__title post__title ">
 			<a href="/post/2018-09-23-rinetd-%E8%BD%AC%E5%8F%91/" rel="bookmark">
@@ -183,9 +237,9 @@
 	<h4 class="widget__title">Recent Posts</h4>
 	<div class="widget__content">
 		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-16-hdfs%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/">hdfs环境搭建记录</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-16-yarn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/">yarn环境搭建记录</a></li>
 			<li class="widget__item"><a class="widget__link" href="/post/2019-04-14-awk%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/">awk常规使用</a></li>
-			<li class="widget__item"><a class="widget__link" href="/post/2019-04-13-vim%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/">vim常规使用</a></li>
-			<li class="widget__item"><a class="widget__link" href="/post/2019-04-09-hugo/">Hugo</a></li>
 		</ul>
 	</div>
 </div>
@@ -193,6 +247,7 @@
 	<h4 class="widget__title">Categories</h4>
 	<div class="widget__content">
 		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/categories/hadoop">Hadoop</a></li>
 			<li class="widget__item"><a class="widget__link" href="/categories/install">Install</a></li>
 			<li class="widget__item"><a class="widget__link" href="/categories/linux">Linux</a></li>
 			<li class="widget__item"><a class="widget__link" href="/categories/markdown">Markdown</a></li>
@@ -207,11 +262,13 @@
 	<div class="widget__content">
 		<a class="widget-taglist__link widget__link btn" href="/tags/awk" title="Awk">Awk (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/centos" title="Centos">Centos (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/hdfs" title="Hdfs">Hdfs (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/hugo" title="Hugo">Hugo (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/jekyll" title="Jekyll">Jekyll (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/mongodb" title="Mongodb">Mongodb (3)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/mysql" title="Mysql">Mysql (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/vim" title="Vim">Vim (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/yarn" title="Yarn">Yarn (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/%e5%b7%a5%e5%85%b7" title="工具">工具 (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/%e7%94%a8%e6%88%b7%e7%ae%a1%e7%90%86" title="用户管理">用户管理 (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/%e7%9b%91%e6%8e%a7" title="监控">监控 (1)</a>

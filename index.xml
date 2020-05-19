@@ -6,10 +6,32 @@
     <description>Recent content on home</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Mon, 15 Apr 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 16 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>hdfs环境搭建记录</title>
+      <link>/post/2020-05-16-hdfs%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Sat, 16 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020-05-16-hdfs%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/</guid>
+      <description>环境准备(使用centos 7)  使用vbox虚拟机安装的centos 7
+ 修改主机名： vi /etc/hostname node00  安装必要软件： yum install rsync -y yum install ssh -y yum install zlib.i686 -y yum install psmisc -y # 时间同步器，不然跑任务会失败 yum install ntp -y  修改为静态ip： vi /etc/sysconfig/network-scripts/ifcfg-enp0s3 BOOTPROTO=static ONBOOT=yes IPADDR=192.168.56.10 # 修改各台主机映射 vi /etc/hosts 192.168.56.10 node00 192.168.56.11 node01 192.168.56.12 node02 192.168.56.13 node03 # 然后重启机器 reboot  配置时间同步 vi /etc/ntp.conf server ntp1.aliyun.com service ntpd start chkconfig ntpd on  关闭iptables： systemctl stop iptables systemctl disable iptables  关闭防火墙： systemctl stop firewalld.</description>
+    </item>
+    
+    <item>
+      <title>yarn环境搭建记录</title>
+      <link>/post/2020-05-16-yarn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Sat, 16 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020-05-16-yarn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/</guid>
+      <description>首先应该先起hdfs
+ 单点yarn  首先进入目录：/opt/bigdata/apache-hadoop-2.6.5-local/etc/hadoop/
+ 修改配置文件mapred-site.xml &amp;lt;property&amp;gt; &amp;lt;name&amp;gt;mapreduce.framework.name&amp;lt;/name&amp;gt; &amp;lt;value&amp;gt;yarn&amp;lt;/value&amp;gt; &amp;lt;/property&amp;gt;  修改配置文件yarn-site.xml &amp;lt;!-- shuffle 洗牌 --&amp;gt; &amp;lt;property&amp;gt; &amp;lt;name&amp;gt;yarn.nodemanager.aux-services&amp;lt;/name&amp;gt; &amp;lt;value&amp;gt;mapreduce_shuffle&amp;lt;/value&amp;gt; &amp;lt;/property&amp;gt;  启动 start-yarn.sh  高可用集群HA 节点规划  node00 resource manager node01 node manager node02 node manager + resource manager node03 node manager  修改配置文件mapred-site.xml &amp;lt;property&amp;gt; &amp;lt;name&amp;gt;mapreduce.framework.name&amp;lt;/name&amp;gt; &amp;lt;value&amp;gt;yarn&amp;lt;/value&amp;gt; &amp;lt;/property&amp;gt;   这里yarn也可以改为local，本地debug的时候使用
+ 修改配置文件yarn-site.xml &amp;lt;!-- shuffle 洗牌 --&amp;gt; &amp;lt;property&amp;gt; &amp;lt;name&amp;gt;yarn.nodemanager.aux-services&amp;lt;/name&amp;gt; &amp;lt;value&amp;gt;mapreduce_shuffle&amp;lt;/value&amp;gt; &amp;lt;/property&amp;gt; &amp;lt;!-- 开启rm高可用 --&amp;gt; &amp;lt;property&amp;gt; &amp;lt;name&amp;gt;yarn.resourcemanager.ha.enabled&amp;lt;/name&amp;gt; &amp;lt;value&amp;gt;true&amp;lt;/value&amp;gt; &amp;lt;/property&amp;gt; &amp;lt;!</description>
+    </item>
     
     <item>
       <title>awk常规使用</title>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>hdfs环境搭建记录 - home</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<meta name="generator" content="Hugo 0.54.0" />
+	<meta property="og:title" content="hdfs环境搭建记录" />
+<meta property="og:description" content="环境准备(使用centos 7)  使用vbox虚拟机安装的centos 7
+ 修改主机名： vi /etc/hostname node00  安装必要软件： yum install rsync -y yum install ssh -y yum install zlib.i686 -y yum install psmisc -y # 时间同步器，不然跑任务会失败 yum install ntp -y  修改为静态ip： vi /etc/sysconfig/network-scripts/ifcfg-enp0s3 BOOTPROTO=static ONBOOT=yes IPADDR=192.168.56.10 # 修改各台主机映射 vi /etc/hosts 192.168.56.10 node00 192.168.56.11 node01 192.168.56.12 node02 192.168.56.13 node03 # 然后重启机器 reboot  配置时间同步 vi /etc/ntp.conf server ntp1.aliyun.com service ntpd start chkconfig ntpd on  关闭iptables： systemctl stop iptables systemctl disable iptables  关闭防火墙： systemctl stop firewalld." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/post/2020-05-16-hdfs%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/" />
+<meta property="article:published_time" content="2020-05-16T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2020-05-16T00:00:00&#43;00:00"/>
+
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="home" rel="home">
+				<div class="logo__title">home</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/post/2019-04-13-vim%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/">vim常规使用</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">hdfs环境搭建记录</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2020-05-16T00:00:00">2020-05-16</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/hadoop" rel="category">hadoop</a></span>
+</div>
+</div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#环境准备-使用centos-7">环境准备(使用centos 7)</a>
+<ul>
+<li>
+<ul>
+<li><a href="#修改主机名">修改主机名：</a></li>
+<li><a href="#安装必要软件">安装必要软件：</a></li>
+<li><a href="#修改为静态ip">修改为静态ip：</a></li>
+<li><a href="#配置时间同步">配置时间同步</a></li>
+<li><a href="#关闭iptables">关闭iptables：</a></li>
+<li><a href="#关闭防火墙">关闭防火墙：</a></li>
+<li><a href="#关闭selinux">关闭selinux</a></li>
+<li><a href="#配置java等环境">配置java等环境：</a></li>
+<li><a href="#创建用户">创建用户：</a></li>
+<li><a href="#创建文件目录-切换到root用户">创建文件目录，切换到root用户：</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#1-单点-伪分布式-节点node00">1、单点/伪分布式（节点node00）</a>
+<ul>
+<li>
+<ul>
+<li><a href="#配置java-home">配置JAVA_HOME</a></li>
+<li><a href="#配置core-site-xml-vi-core-site-xml">配置core-site.xml <code>vi core-site.xml</code></a></li>
+<li><a href="#配置hdfs-site-xml-hdfs-site-xml">配置hdfs-site.xml <code>hdfs-site.xml</code></a></li>
+<li><a href="#配置datanode">配置datanode</a></li>
+<li><a href="#启动">启动</a></li>
+<li><a href="#其他命令">其他命令</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#2-完全分布式集群-node00-node01-node02-node03-主namenode挂掉时需要手动把second-namenode升级为主">2、完全分布式集群(node00, node01, node02, node03)，主namenode挂掉时需要手动把second namenode升级为主</a>
+<ul>
+<li>
+<ul>
+<li><a href="#角色部署">角色部署</a></li>
+<li><a href="#配置hdfs-site-xml">配置hdfs-site.xml</a></li>
+<li><a href="#配置datanode-1">配置datanode</a></li>
+<li><a href="#分发配置到其他服务器">分发配置到其他服务器</a></li>
+<li><a href="#启动-1">启动</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#3-高可用完全分布式集群-node00-node01-node02-node03">3、高可用完全分布式集群(node00, node01, node02, node03)</a>
+<ul>
+<li>
+<ul>
+<li><a href="#角色部署-1">角色部署</a></li>
+<li><a href="#部署zookeeper">部署zookeeper</a></li>
+<li><a href="#修改hdfs-site-xml">修改hdfs-site.xml</a></li>
+<li><a href="#修改core-site-xml">修改core-site.xml</a></li>
+<li><a href="#分发配置到其他服务器-1">分发配置到其他服务器</a></li>
+<li><a href="#启动-2">启动</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#补充">补充</a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<h2 id="环境准备-使用centos-7">环境准备(使用centos 7)</h2>
+
+<blockquote>
+<p>使用vbox虚拟机安装的centos 7</p>
+</blockquote>
+
+<h4 id="修改主机名">修改主机名：</h4>
+
+<pre><code class="language-sh">vi /etc/hostname
+node00
+</code></pre>
+
+<h4 id="安装必要软件">安装必要软件：</h4>
+
+<pre><code class="language-sh">yum install rsync -y
+yum install ssh -y
+yum install zlib.i686 -y
+yum install psmisc -y
+# 时间同步器，不然跑任务会失败
+yum install ntp  -y
+</code></pre>
+
+<h4 id="修改为静态ip">修改为静态ip：</h4>
+
+<pre><code class="language-sh">vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
+
+BOOTPROTO=static
+ONBOOT=yes
+IPADDR=192.168.56.10
+
+# 修改各台主机映射
+vi /etc/hosts
+192.168.56.10 node00
+192.168.56.11 node01
+192.168.56.12 node02
+192.168.56.13 node03
+
+# 然后重启机器
+reboot
+</code></pre>
+
+<h4 id="配置时间同步">配置时间同步</h4>
+
+<pre><code class="language-sh">vi /etc/ntp.conf
+server ntp1.aliyun.com
+
+service ntpd start
+chkconfig ntpd on
+</code></pre>
+
+<h4 id="关闭iptables">关闭iptables：</h4>
+
+<pre><code class="language-sh">systemctl stop iptables
+systemctl disable iptables
+</code></pre>
+
+<h4 id="关闭防火墙">关闭防火墙：</h4>
+
+<pre><code class="language-sh">systemctl stop firewalld.service
+systemctl disable firewalld.service
+</code></pre>
+
+<h4 id="关闭selinux">关闭selinux</h4>
+
+<pre><code class="language-sh">vi /etc/selinux/config
+
+SELINUX=disabled
+</code></pre>
+
+<h4 id="配置java等环境">配置java等环境：</h4>
+
+<blockquote>
+<p>java目录需要为目录/usr/java/default</p>
+</blockquote>
+
+<pre><code class="language-sh">ln /usr/java/jdk1.8.0_181-amd64 /usr/java/latest
+ln /usr/java/latest /usr/java/default
+
+vi /etc/profile
+
+export JAVA_HOME=/usr/java/default
+export HADOOP_HOME=/opt/bigdata/hadoop
+export ZOO_HOME=/opt/bigdata/zookeeper
+export PATH=$PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$ZOO_HOME/bin
+</code></pre>
+
+<h4 id="创建用户">创建用户：</h4>
+
+<pre><code class="language-sh">useradd hadoop
+passwd hadoop
+
+# 切换到hadoop用户
+su hadoop
+
+# 生成密钥对，一直按回车
+ssh-keygen
+
+# 修改权限，不然免密配置不生效
+chmod 600 ~/.ssh/authorized_keys
+
+# 本机配置免密
+cat ~/.ssh/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys
+
+# 其他机器配置免密
+ssh-copy-id hadoop@node01
+
+# 尝试登陆，即可不用密码
+ssh hadoop@node01
+</code></pre>
+
+<h4 id="创建文件目录-切换到root用户">创建文件目录，切换到root用户：</h4>
+
+<pre><code class="language-sh"># 创建目录
+mkdir -p /opt/bigdata/ /var/bigdata/
+
+# 修改文件目录属于hadoop用户
+chown -R hadoop /opt/bigdata/ /var/bigdata/
+</code></pre>
+
+<p>分发hadoop，zookeeper：</p>
+
+<pre><code class="language-sh">mv apache-hadoop-2.6.5 /opt/bigdata/
+mv apache-zookeeper-3.6.1 /opt/bigdata/
+
+# 分发到其他机器
+cd /opt/
+scp -r ./bigdata/ hadoop@node01:`pwd`
+
+# 最后配置下软链接
+ln -sf /opt/bigdata/apache-hadoop-2.6.5 /opt/bigdata/hadoop
+ln -sf /opt/bigdata/apache-zookeeper-3.6.1 /opt/bigdata/zookeeper
+
+source /etc/profile
+</code></pre>
+
+<h2 id="1-单点-伪分布式-节点node00">1、单点/伪分布式（节点node00）</h2>
+
+<blockquote>
+<p>首先进入目录：<code>cd /opt/bigdata/hadoop</code></p>
+</blockquote>
+
+<h4 id="配置java-home">配置JAVA_HOME</h4>
+
+<pre><code class="language-sh">cd etc/hadoop
+
+vi hadoop-env.sh
+# 修改项
+export JAVA_HOME=/usr/java/default
+</code></pre>
+
+<h4 id="配置core-site-xml-vi-core-site-xml">配置core-site.xml <code>vi core-site.xml</code></h4>
+
+<pre><code class="language-xml">&lt;property&gt;
+    &lt;name&gt;fs.defaultFS&lt;/name&gt;
+    &lt;value&gt;hdfs://node00:9000&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<h4 id="配置hdfs-site-xml-hdfs-site-xml">配置hdfs-site.xml <code>hdfs-site.xml</code></h4>
+
+<pre><code class="language-xml">&lt;!-- 配置副本数为1 --&gt;
+&lt;property&gt;
+    &lt;name&gt;dfs.replication&lt;/name&gt;
+    &lt;value&gt;1&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置namenode目录 --&gt;
+&lt;property&gt;
+    &lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;
+    &lt;value&gt;/var/bigdata/hadoop/local/dfs/name&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置datanode目录 --&gt;
+&lt;property&gt;
+    &lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;
+    &lt;value&gt;/var/bigdata/hadoop/local/dfs/data&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置second namenode地址 --&gt;
+&lt;property&gt;
+    &lt;name&gt;dfs.namenode.secondary.http-address&lt;/name&gt;
+    &lt;value&gt;node00:50090&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置second namenode checkpoint目录 --&gt;
+&lt;property&gt;
+    &lt;name&gt;dfs.namenode.checkpoint.dir&lt;/name&gt;
+    &lt;value&gt;/var/bigdata/hadoop/local/dfs/secondary&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<h4 id="配置datanode">配置datanode</h4>
+
+<pre><code class="language-sh">echo &quot;node00&quot; &gt; slaves
+</code></pre>
+
+<h4 id="启动">启动</h4>
+
+<pre><code class="language-sh"># 第一次首先需要格式化namenode，非第一次不需要
+hdfs namenode -format
+
+# 启动hdfs
+start-dfs.sh
+</code></pre>
+
+<h4 id="其他命令">其他命令</h4>
+
+<pre><code class="language-sh"># 关闭
+stop-dfs.sh
+
+# 使用hdfs命令操作文件
+hdfs dfs xxx
+</code></pre>
+
+<hr />
+
+<h2 id="2-完全分布式集群-node00-node01-node02-node03-主namenode挂掉时需要手动把second-namenode升级为主">2、完全分布式集群(node00, node01, node02, node03)，主namenode挂掉时需要手动把second namenode升级为主</h2>
+
+<h4 id="角色部署">角色部署</h4>
+
+<ul>
+<li>node00 namenode</li>
+<li>node01 second namenode + datanode</li>
+<li>node02 datanode</li>
+<li>node03 datanode</li>
+</ul>
+
+<blockquote>
+<p>core-site.xml不需要修改</p>
+</blockquote>
+
+<p>首先进入目录：<code>cd /opt/bigdata/hadoop/etc/hadoop/</code></p>
+
+<h4 id="配置hdfs-site-xml">配置hdfs-site.xml</h4>
+
+<pre><code class="language-xml">&lt;!-- 配置副本数为2 --&gt;
+&lt;property&gt;
+	&lt;name&gt;dfs.replication&lt;/name&gt;
+	&lt;value&gt;2&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置namenode目录 --&gt;
+&lt;property&gt;
+	&lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;
+	&lt;value&gt;/var/bigdata/hadoop/full/dfs/name&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置datanode目录 --&gt;
+&lt;property&gt;
+	&lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;
+	&lt;value&gt;/var/bigdata/hadoop/full/dfs/data&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置second namenode地址 --&gt;
+&lt;property&gt;
+	&lt;name&gt;dfs.namenode.secondary.http-address&lt;/name&gt;
+	&lt;value&gt;node01:50090&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置second namenode checkpoint目录 --&gt;
+&lt;property&gt;
+	&lt;name&gt;dfs.namenode.checkpoint.dir&lt;/name&gt;
+	&lt;value&gt;/var/bigdata/hadoop/full/dfs/secondary&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<h4 id="配置datanode-1">配置datanode</h4>
+
+<pre><code class="language-sh">vi slaves
+
+node01
+node02
+node03
+</code></pre>
+
+<h4 id="分发配置到其他服务器">分发配置到其他服务器</h4>
+
+<pre><code class="language-sh">scp hdfs-site.xml slaves hadoop@node01:`pwd`
+scp hdfs-site.xml slaves hadoop@node02:`pwd`
+scp hdfs-site.xml slaves hadoop@node03:`pwd`
+</code></pre>
+
+<h4 id="启动-1">启动</h4>
+
+<pre><code class="language-sh"># 第一次首先需要格式化namenode，非第一次不需要
+hdfs namenode -format
+
+# 启动hdfs
+start-dfs.sh
+</code></pre>
+
+<hr />
+
+<h2 id="3-高可用完全分布式集群-node00-node01-node02-node03">3、高可用完全分布式集群(node00, node01, node02, node03)</h2>
+
+<h4 id="角色部署-1">角色部署</h4>
+
+<ul>
+<li>node00 namenode + JournalNode + zkfc</li>
+<li>node01 namenode + datanode + zookeeper + zkfc</li>
+<li>node02 datanode + zookeeper + JournalNode</li>
+<li>node03 datanode + zookeeper + JournalNode</li>
+</ul>
+
+<blockquote>
+<p>zkfc两台节点需要互相配置免密</p>
+</blockquote>
+
+<h4 id="部署zookeeper">部署zookeeper</h4>
+
+<pre><code class="language-sh">cd /opt/bigdata/zookeeper/conf
+cp zoo_sample.cfg zoo.cfg
+
+vi zoo.cfg
+# 修改数据目录为
+dataDir=/var/bigdata/zookeeper
+zookeeper.client.sasl=false
+server.1=node01:2888:3888
+server.2=node02:2888:3888
+server.3=node03:2888:3888
+
+# 分发配置文件到各个节点
+scp zoo.cfg hadoop@node01:`pwd`
+scp zoo.cfg hadoop@node02:`pwd`
+scp zoo.cfg hadoop@node03:`pwd`
+
+# 各台机器上需保证存在配置的数据目录，以hadoop用户创建目录
+mkdir -p /var/bigdata/zookeeper
+
+# 各台节点上数据文件需要创建文件myid，写入server.后面的数字
+# 节点1 node01
+echo &quot;1&quot; &gt; /var/bigdata/zookeeper/myid
+# 节点2 node02
+echo &quot;2&quot; &gt; /var/bigdata/zookeeper/myid
+# 节点3 node03
+echo &quot;3&quot; &gt; /var/bigdata/zookeeper/myid
+
+# 最后启动
+# node01
+zkServer.sh start
+# node02
+zkServer.sh start
+# node03
+zkServer.sh start
+</code></pre>
+
+<h4 id="修改hdfs-site-xml">修改hdfs-site.xml</h4>
+
+<pre><code class="language-xml">&lt;!-- 配置副本数为2 --&gt;
+&lt;property&gt;
+	&lt;name&gt;dfs.replication&lt;/name&gt;
+	&lt;value&gt;2&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置namenode目录 --&gt;
+&lt;property&gt;
+	&lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;
+	&lt;value&gt;/var/bigdata/hadoop/ha/dfs/name&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置datanode目录 --&gt;
+&lt;property&gt;
+	&lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;
+	&lt;value&gt;/var/bigdata/hadoop/ha/dfs/data&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置second namenode地址 --&gt;
+&lt;property&gt;
+	&lt;name&gt;dfs.namenode.secondary.http-address&lt;/name&gt;
+	&lt;value&gt;node01:50090&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置second namenode checkpoint目录 --&gt;
+&lt;property&gt;
+	&lt;name&gt;dfs.namenode.checkpoint.dir&lt;/name&gt;
+	&lt;value&gt;/var/bigdata/hadoop/ha/dfs/secondary&lt;/value&gt;
+&lt;/property&gt;
+
+&lt;!-- 配置逻辑映射关系 --&gt;
+&lt;property&gt;
+  	&lt;name&gt;dfs.nameservices&lt;/name&gt;
+  	&lt;value&gt;mycluster&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置namemode有多少个 --&gt;
+&lt;property&gt;
+  	&lt;name&gt;dfs.ha.namenodes.mycluster&lt;/name&gt;
+  	&lt;value&gt;nn1,nn2&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置namemode起在哪里 --&gt;
+&lt;property&gt;
+  	&lt;name&gt;dfs.namenode.rpc-address.mycluster.nn1&lt;/name&gt;
+  	&lt;value&gt;node00:8020&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+  	&lt;name&gt;dfs.namenode.rpc-address.mycluster.nn2&lt;/name&gt;
+  	&lt;value&gt;node01:8020&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+  	&lt;name&gt;dfs.namenode.http-address.mycluster.nn1&lt;/name&gt;
+  	&lt;value&gt;node00:50070&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+  	&lt;name&gt;dfs.namenode.http-address.mycluster.nn2&lt;/name&gt;
+  	&lt;value&gt;node01:50070&lt;/value&gt;
+&lt;/property&gt;
+
+&lt;!-- 配置journal node起在哪里 --&gt;
+&lt;property&gt;
+  	&lt;name&gt;dfs.namenode.shared.edits.dir&lt;/name&gt;
+  	&lt;value&gt;qjournal://node01:8485;node02:8485;node03:8485/mycluster&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+  	&lt;name&gt;dfs.journalnode.edits.dir&lt;/name&gt;
+  	&lt;value&gt;/var/bigdata/hadoop/ha/dfs/jn&lt;/value&gt;
+&lt;/property&gt;
+
+&lt;!-- HA角色切换的代理类和实现方法，我们用的ssh免密 --&gt;
+&lt;property&gt;
+  	&lt;name&gt;dfs.client.failover.proxy.provider.mycluster&lt;/name&gt;
+  	&lt;value&gt;org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+  	&lt;name&gt;dfs.ha.fencing.methods&lt;/name&gt;
+  	&lt;value&gt;sshfence&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+  	&lt;name&gt;dfs.ha.fencing.ssh.private-key-files&lt;/name&gt;
+  	&lt;value&gt;/home/hadoop/.ssh/id_rsa&lt;/value&gt;
+&lt;/property&gt;
+
+&lt;!-- 开启自动化： zkfc --&gt;
+&lt;property&gt;
+	&lt;name&gt;dfs.ha.automatic-failover.enabled&lt;/name&gt;
+	&lt;value&gt;true&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<h4 id="修改core-site-xml">修改core-site.xml</h4>
+
+<pre><code class="language-xml">&lt;!-- 配置zookeeper集群地址 --&gt;
+&lt;property&gt;
+	&lt;name&gt;ha.zookeeper.quorum&lt;/name&gt;
+	&lt;value&gt;node01:2181,node02:2181,node03:2181&lt;/value&gt;
+&lt;/property&gt;
+&lt;!-- 配置是哪个集群 --&gt;
+&lt;property&gt;
+  	&lt;name&gt;fs.defaultFS&lt;/name&gt;
+  	&lt;value&gt;hdfs://mycluster&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<h4 id="分发配置到其他服务器-1">分发配置到其他服务器</h4>
+
+<pre><code class="language-sh">scp hdfs-site.xml core-site.xml slaves hadoop@node01:`pwd`
+scp hdfs-site.xml core-site.xml slaves hadoop@node02:`pwd`
+scp hdfs-site.xml core-site.xml slaves hadoop@node03:`pwd`
+</code></pre>
+
+<h4 id="启动-2">启动</h4>
+
+<pre><code class="language-sh"># 先启动journal node
+hadoop-daemon.sh start journalnode
+
+# 选择一个namenode做格式化 =&gt; 第一次启动才需要做
+hdfs namenode -format
+# 启动这个namenode，以备另一台同步数据
+hadoop-daemon.sh start namenode 
+
+# 在另一台namenode
+hdfs namenode -bootstrapStandby
+
+# zkfc格式化 =&gt; 第一次才需要做
+hdfs zkfc  -formatZK
+
+# 最后启动
+start-dfs.sh
+</code></pre>
+
+<blockquote>
+<p>以后启动停止只需要<code>start-dfs.sh</code>跟<code>stop-dfs.sh</code>即可</p>
+</blockquote>
+
+<h2 id="补充">补充</h2>
+
+<ul>
+<li>hdfs访问地址：<a href="http://node00:50070/">http://node00:50070/</a>  跟  <a href="http://node01:50070/">http://node01:50070/</a></li>
+</ul>
+
+		</div>
+		
+<div class="post__tags tags clearfix">
+	<svg class="tags__icon icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item"><a class="tags__link btn" href="/tags/hdfs/" rel="tag">hdfs</a></li>
+	</ul>
+</div>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<div class="authorbox__header">
+		<span class="authorbox__name">About pdc</span>
+	</div>
+	<div class="authorbox__description">
+		Pdc&#39;s true identity is unknown. Maybe he is a successful engineer or doctor. Nobody knows it.
+	</div>
+</div>
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/2020-05-16-yarn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">yarn环境搭建记录</p></a>
+	</div>
+</nav>
+
+<section class="comments">
+	<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "chenjipdc" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+			</div>
+			<aside class="sidebar"><div class="widget-search widget">
+	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
+		<label>
+			<input class="widget-search__field" type="search" placeholder="SEARCH..." value="" name="q" aria-label="SEARCH...">
+		</label>
+		<input class="widget-search__submit" type="submit" value="Search">
+		<input type="hidden" name="sitesearch" value="/" />
+	</form>
+</div>
+<div class="widget-recent widget">
+	<h4 class="widget__title">Recent Posts</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-16-hdfs%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/">hdfs环境搭建记录</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-16-yarn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/">yarn环境搭建记录</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/2019-04-14-awk%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/">awk常规使用</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/categories/hadoop">Hadoop</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/install">Install</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/linux">Linux</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/markdown">Markdown</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/monitor">Monitor</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/tips">Tips</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93">数据库</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Tags</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/awk" title="Awk">Awk (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/centos" title="Centos">Centos (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/hdfs" title="Hdfs">Hdfs (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/hugo" title="Hugo">Hugo (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/jekyll" title="Jekyll">Jekyll (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/mongodb" title="Mongodb">Mongodb (3)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/mysql" title="Mysql">Mysql (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/vim" title="Vim">Vim (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/yarn" title="Yarn">Yarn (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e5%b7%a5%e5%85%b7" title="工具">工具 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e7%94%a8%e6%88%b7%e7%ae%a1%e7%90%86" title="用户管理">用户管理 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e7%9b%91%e6%8e%a7" title="监控">监控 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e8%b5%84%e6%96%99" title="资料">资料 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e8%bd%ac%e5%8f%91" title="转发">转发 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e8%bd%af%e4%bb%b6" title="软件">软件 (1)</a>
+	</div>
+</div>
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/chenjipdc" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:chenjipdc@gmail.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>chenjipdc@gmail.com</span>
+			</a>
+		</div>
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 pdc.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>
