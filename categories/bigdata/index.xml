@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bigdata on home</title>
+    <link>/categories/bigdata/</link>
+    <description>Recent content in Bigdata on home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 21 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/bigdata/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>学习图</title>
+      <link>/post/2020-05-21-%E5%AD%A6%E4%B9%A0%E5%9B%BE/</link>
+      <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020-05-21-%E5%AD%A6%E4%B9%A0%E5%9B%BE/</guid>
+      <description>  画图是学习的一种方法，把自己学习理解的东西画出来、描述出来就是最大的收获。
+ 以下的图会不定时增加新内容，记录学习的心路历程。
+ 有些图很大。为什么很大？因为穷。
+ java圈  java思维导入 spring、mysql等UML图  大数据圈  hadoop生态UML图  </description>
+    </item>
+    
+  </channel>
+</rss>

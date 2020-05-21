@@ -13,7 +13,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="/" />
 
-<meta property="og:updated_time" content="2020-05-16T00:00:00&#43;00:00"/>
+<meta property="og:updated_time" content="2020-05-21T00:00:00&#43;00:00"/>
 
 	
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
@@ -54,6 +54,31 @@
 			
 <main class="main list" role="main">
 	<article class="list__item post">
+	<header class="list__header">
+		<h3 class="list__title post__title ">
+			<a href="/post/2020-05-21-%E5%AD%A6%E4%B9%A0%E5%9B%BE/" rel="bookmark">
+			学习图
+			</a>
+		</h3>
+		<div class="list__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2020-05-21T00:00:00">2020-05-21</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/java" rel="category">java</a>, <a class="meta__link" href="/categories/bigdata" rel="category">bigdata</a></span>
+</div>
+</div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		  画图是学习的一种方法，把自己学习理解的东西画出来、描述出来就是最大的收获。
+ 以下的图会不定时增加新内容，记录学习的心路历程。
+ 有些图很大。为什么很大？因为穷。
+ java圈  java思维导入 spring、mysql等UML图  大数据圈  hadoop生态UML图  
+	</div>
+</article><article class="list__item post">
 	<header class="list__header">
 		<h3 class="list__title post__title ">
 			<a href="/post/2020-05-16-hdfs%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/" rel="bookmark">
@@ -303,33 +328,6 @@ mainroad集成Disqus 只需在配置文件config.toml配置disqusShortname = &qu
 	<div class="list__footer clearfix">
 		<a class="list__footer-readmore btn" href="/post/2019-01-06-grafana_prometheus_%E5%88%9D%E4%BD%93%E9%AA%8C/">Read more…</a>
 	</div>
-</article><article class="list__item post">
-	<header class="list__header">
-		<h3 class="list__title post__title ">
-			<a href="/post/2018-09-25-mongodb%E4%B8%BB%E4%BB%8E%E4%B8%8D%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/" rel="bookmark">
-			mongodb主从(不建议使用)
-			</a>
-		</h3>
-		<div class="list__meta meta">
-<div class="meta__item-datetime meta__item">
-	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
-	<time class="meta__text" datetime="2018-09-25T00:00:00">2018-09-25</time>
-</div>
-
-<div class="meta__item-categories meta__item">
-	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
-	<span class="meta__text"><a class="meta__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93" rel="category">数据库</a></span>
-</div>
-</div>
-	</header>
-	<div class="content list__excerpt post__content clearfix">
-		参考资料 官网 master-slave
-mongodb的主从要注意的事项  主服务器挂掉，从服务器不会自动取代主服务器。 主服务器挂掉后重启，从服务器则会重新同步数据，之前同步过来的数据被初始化。 综合以上两点，mongodb要随时做好数据备份，以免造成无法弥补的数据丢失！！！  master docker run -v ~/docker/test/mongo/test1/data/:/data/db -p 27001:27017 --name master_mongo --network docker_default mongo:3.2 mongod --dbpath /data/db --master  slave docker run -v ~/docker/test/mongo/test2/data/:/data/db -p 27002:27017 --name slave_mongo --network docker_default mongo:3.2 mongod --dbpath /data/db --slave --source 192.168.1.222:27001   &ndash;only 可指定database &ndash;slavedelay &ndash;fastsyn &ndash;aoturesync &ndash;oplogSize   也可先创建从节点(slave)
-docker run -v ~/docker/test/mongo/test3/data/:/data/db -p 27003:27017 --name slave1_mongo --network docker_default mongo:3.2 mongod --dbpath /data/db --slave  然后再指定master
-	</div>
-	<div class="list__footer clearfix">
-		<a class="list__footer-readmore btn" href="/post/2018-09-25-mongodb%E4%B8%BB%E4%BB%8E%E4%B8%8D%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/">Read more…</a>
-	</div>
 </article>
 </main>
 
@@ -353,9 +351,9 @@ docker run -v ~/docker/test/mongo/test3/data/:/data/db -p 27003:27017 --name sla
 	<h4 class="widget__title">Recent Posts</h4>
 	<div class="widget__content">
 		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-21-%E5%AD%A6%E4%B9%A0%E5%9B%BE/">学习图</a></li>
 			<li class="widget__item"><a class="widget__link" href="/post/2020-05-16-hdfs%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/">hdfs环境搭建记录</a></li>
 			<li class="widget__item"><a class="widget__link" href="/post/2020-05-16-yarn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/">yarn环境搭建记录</a></li>
-			<li class="widget__item"><a class="widget__link" href="/post/2019-04-14-awk%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/">awk常规使用</a></li>
 		</ul>
 	</div>
 </div>
@@ -363,8 +361,10 @@ docker run -v ~/docker/test/mongo/test3/data/:/data/db -p 27003:27017 --name sla
 	<h4 class="widget__title">Categories</h4>
 	<div class="widget__content">
 		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/categories/bigdata">Bigdata</a></li>
 			<li class="widget__item"><a class="widget__link" href="/categories/hadoop">Hadoop</a></li>
 			<li class="widget__item"><a class="widget__link" href="/categories/install">Install</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/java">Java</a></li>
 			<li class="widget__item"><a class="widget__link" href="/categories/linux">Linux</a></li>
 			<li class="widget__item"><a class="widget__link" href="/categories/markdown">Markdown</a></li>
 			<li class="widget__item"><a class="widget__link" href="/categories/monitor">Monitor</a></li>
@@ -378,11 +378,14 @@ docker run -v ~/docker/test/mongo/test3/data/:/data/db -p 27003:27017 --name sla
 	<div class="widget__content">
 		<a class="widget-taglist__link widget__link btn" href="/tags/awk" title="Awk">Awk (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/centos" title="Centos">Centos (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/hadoop" title="Hadoop">Hadoop (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/hdfs" title="Hdfs">Hdfs (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/hugo" title="Hugo">Hugo (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/java" title="Java">Java (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/jekyll" title="Jekyll">Jekyll (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/mongodb" title="Mongodb">Mongodb (3)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/mysql" title="Mysql">Mysql (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/spring" title="Spring">Spring (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/vim" title="Vim">Vim (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/yarn" title="Yarn">Yarn (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/%e5%b7%a5%e5%85%b7" title="工具">工具 (1)</a>
