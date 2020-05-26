@@ -13,7 +13,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="/post/" />
 
-<meta property="og:updated_time" content="2018-09-25T00:00:00&#43;00:00"/>
+<meta property="og:updated_time" content="2019-01-06T00:00:00&#43;00:00"/>
 
 	
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
@@ -42,6 +42,9 @@
 	</button>
 	<ul class="menu__list">
 		<li class="menu__item">
+			<a class="menu__link" href="/post/2020-05-26-%E6%90%9C%E7%B4%A2%E6%8A%80%E5%B7%A7/">搜索技巧</a>
+		</li>
+		<li class="menu__item">
 			<a class="menu__link" href="/post/2019-04-13-vim%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/">vim常规使用</a>
 		</li>
 		<li class="menu__item">
@@ -59,6 +62,41 @@
 	<header class="main__header">
 		<h1 class="main__title">Posts</h1>
 	</header><article class="list__item post">
+	<header class="list__header">
+		<h3 class="list__title post__title ">
+			<a href="/post/2019-01-06-grafana_prometheus_%E5%88%9D%E4%BD%93%E9%AA%8C/" rel="bookmark">
+			grafana、prometheus初体验
+			</a>
+		</h3>
+		<div class="list__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2019-01-06T00:00:00">2019-01-06</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/monitor" rel="category">monitor</a></span>
+</div>
+</div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		测试机：阿里云抢占式实例 centos 7.5
+外网ip：47.107.169.xxx
+内网ip：172.18.201.49
+1.安装docker：  阿里源安装
+ https://yq.aliyun.com/articles/110806?spm=5176.8351553.0.0.ad631991oPQ1ue
+# step 1: 安装必要的一些系统工具 sudo yum install -y yum-utils device-mapper-persistent-data lvm2 # Step 2: 添加软件源信息 sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo # Step 3: 更新并安装 Docker-CE sudo yum makecache fast sudo yum -y install docker-ce # Step 4: 开启Docker服务 sudo systemctl start docker   官网一键脚本安装文档
+ https://docs.docker.com/install/linux/docker-ce/centos/#install-using-the-convenience-script
+2.node_exporter  参考
+ https://github.com/prometheus/node_exporter
+ 安装
+ wget https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz tar xvfz node_exporter-0.17.0.linux-amd64.tar.gz cd node_exporter-0.
+	</div>
+	<div class="list__footer clearfix">
+		<a class="list__footer-readmore btn" href="/post/2019-01-06-grafana_prometheus_%E5%88%9D%E4%BD%93%E9%AA%8C/">Read more…</a>
+	</div>
+</article><article class="list__item post">
 	<header class="list__header">
 		<h3 class="list__title post__title ">
 			<a href="/post/2018-09-25-mongodb%E4%B8%BB%E4%BB%8E%E4%B8%8D%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8/" rel="bookmark">
@@ -267,9 +305,9 @@ docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为�
 	<h4 class="widget__title">Recent Posts</h4>
 	<div class="widget__content">
 		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-26-%E6%90%9C%E7%B4%A2%E6%8A%80%E5%B7%A7/">搜索技巧</a></li>
 			<li class="widget__item"><a class="widget__link" href="/post/2020-05-21-%E5%AD%A6%E4%B9%A0%E5%9B%BE/">学习图</a></li>
 			<li class="widget__item"><a class="widget__link" href="/post/2020-05-16-hdfs%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/">hdfs环境搭建记录</a></li>
-			<li class="widget__item"><a class="widget__link" href="/post/2020-05-16-yarn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/">yarn环境搭建记录</a></li>
 		</ul>
 	</div>
 </div>
@@ -284,6 +322,7 @@ docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为�
 			<li class="widget__item"><a class="widget__link" href="/categories/linux">Linux</a></li>
 			<li class="widget__item"><a class="widget__link" href="/categories/markdown">Markdown</a></li>
 			<li class="widget__item"><a class="widget__link" href="/categories/monitor">Monitor</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/search">Search</a></li>
 			<li class="widget__item"><a class="widget__link" href="/categories/tips">Tips</a></li>
 			<li class="widget__item"><a class="widget__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93">数据库</a></li>
 		</ul>
@@ -294,6 +333,8 @@ docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为�
 	<div class="widget__content">
 		<a class="widget-taglist__link widget__link btn" href="/tags/awk" title="Awk">Awk (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/centos" title="Centos">Centos (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/github" title="Github">Github (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/google" title="Google">Google (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/hadoop" title="Hadoop">Hadoop (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/hdfs" title="Hdfs">Hdfs (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/hugo" title="Hugo">Hugo (1)</a>
