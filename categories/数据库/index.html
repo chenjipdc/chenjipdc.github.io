@@ -13,7 +13,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" />
 
-<meta property="og:updated_time" content="2019-01-10T00:00:00&#43;00:00"/>
+<meta property="og:updated_time" content="2020-05-27T00:00:00&#43;00:00"/>
 
 	
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
@@ -62,6 +62,72 @@
 	<header class="main__header">
 		<h1 class="main__title">数据库</h1>
 	</header><article class="list__item post">
+	<header class="list__header">
+		<h3 class="list__title post__title ">
+			<a href="/post/2020-05-27-mysql%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/" rel="bookmark">
+			mysql执行计划
+			</a>
+		</h3>
+		<div class="list__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2020-05-27T00:00:00">2020-05-27</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93" rel="category">数据库</a></span>
+</div>
+</div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		各列含义：   详细解释：      参考：
+mysql5.7
+马士兵database笔记
+ mysql查看执行计划使用explain+SQL语句。注意：执行计划里面的参数都是预估值，并不是正在的查询！！！
+ explain示例结果
++----+--------------+-------------+------------+--------+---------------------+---------------------+---------+------------------+------+----------+-------------------------+ | id | select_type | table | partitions | type | possible_keys | key | key_len | ref | rows | filtered | Extra | +----+--------------+-------------+------------+--------+---------------------+---------------------+---------+------------------+------+----------+-------------------------+ | 1 | PRIMARY | st | NULL | index | PRIMARY | PRIMARY | 82 | NULL | 17 | 100.
+	</div>
+	<div class="list__footer clearfix">
+		<a class="list__footer-readmore btn" href="/post/2020-05-27-mysql%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/">Read more…</a>
+	</div>
+</article><article class="list__item post">
+	<header class="list__header">
+		<h3 class="list__title post__title ">
+			<a href="/post/2020-05-27-mysql%E9%94%81/" rel="bookmark">
+			mysql锁
+			</a>
+		</h3>
+		<div class="list__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2020-05-27T00:00:00">2020-05-27</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93" rel="category">数据库</a></span>
+</div>
+</div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		参考：
+mysql5.7 InnoDB-locking
+mysql5.7 Lock-tables
+马士兵database笔记
+mysql常用锁分为两类：
+1、表锁。开销小，粒度大，发生锁冲突概率高，并发效率低，不会产生死锁。一般适合查询类场景。
+2、行锁。开销大，粒度小，发生锁冲突概率低，并发效率高，可能会造成死锁。一般适合更新类场景。
+mysql手动开启锁：
+LOCK TABLES tbl_name [[AS] alias] lock_type [, tbl_name [[AS] alias] lock_type] ... lock_type: { READ [LOCAL] | [LOW_PRIORITY] WRITE } UNLOCK TABLES  1、MyISAM锁 表共享读锁（table read locking） 不会阻塞其他session对表的读操作，但会阻塞写操作；当前session既可以读也可以进行写操作。
+表独占写锁（table write locking） 会阻塞其他session对表的写跟读操作；当前session既可以读也可以进行写操作。
+建表模拟数据：
+CREATE TABLE `testlock` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(20) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8; INSERT INTO `testlock` (`id`, `name`) VALUES ('1', 'a'); INSERT INTO `testlock` (`id`, `name`) VALUES ('2', 'b'); INSERT INTO `testlock` (`id`, `name`) VALUES ('3', 'c'); INSERT INTO `testlock` (`id`, `name`) VALUES ('4', 'd');  写阻塞
+	</div>
+	<div class="list__footer clearfix">
+		<a class="list__footer-readmore btn" href="/post/2020-05-27-mysql%E9%94%81/">Read more…</a>
+	</div>
+</article><article class="list__item post">
 	<header class="list__header">
 		<h3 class="list__title post__title ">
 			<a href="/post/2019-01-10-mysql-tips/" rel="bookmark">
@@ -186,9 +252,9 @@ docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为�
 	<h4 class="widget__title">Recent Posts</h4>
 	<div class="widget__content">
 		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-27-mysql%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/">mysql执行计划</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-27-mysql%E9%94%81/">mysql锁</a></li>
 			<li class="widget__item"><a class="widget__link" href="/post/2020-05-26-%E6%90%9C%E7%B4%A2%E6%8A%80%E5%B7%A7/">搜索技巧</a></li>
-			<li class="widget__item"><a class="widget__link" href="/post/2020-05-21-%E5%AD%A6%E4%B9%A0%E5%9B%BE/">学习图</a></li>
-			<li class="widget__item"><a class="widget__link" href="/post/2020-05-16-hdfs%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/">hdfs环境搭建记录</a></li>
 		</ul>
 	</div>
 </div>
@@ -222,7 +288,7 @@ docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为�
 		<a class="widget-taglist__link widget__link btn" href="/tags/java" title="Java">Java (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/jekyll" title="Jekyll">Jekyll (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/mongodb" title="Mongodb">Mongodb (3)</a>
-		<a class="widget-taglist__link widget__link btn" href="/tags/mysql" title="Mysql">Mysql (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/mysql" title="Mysql">Mysql (3)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/spring" title="Spring">Spring (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/vim" title="Vim">Vim (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/yarn" title="Yarn">Yarn (1)</a>

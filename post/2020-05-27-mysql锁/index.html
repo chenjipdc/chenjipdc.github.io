@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>mysql锁 - home</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<meta name="generator" content="Hugo 0.54.0" />
+	<meta property="og:title" content="mysql锁" />
+<meta property="og:description" content="参考：
+mysql5.7 InnoDB-locking
+mysql5.7 Lock-tables
+马士兵database笔记
+mysql常用锁分为两类：
+1、表锁。开销小，粒度大，发生锁冲突概率高，并发效率低，不会产生死锁。一般适合查询类场景。
+2、行锁。开销大，粒度小，发生锁冲突概率低，并发效率高，可能会造成死锁。一般适合更新类场景。
+mysql手动开启锁：
+LOCK TABLES tbl_name [[AS] alias] lock_type [, tbl_name [[AS] alias] lock_type] ... lock_type: { READ [LOCAL] | [LOW_PRIORITY] WRITE } UNLOCK TABLES  1、MyISAM锁 表共享读锁（table read locking） 不会阻塞其他session对表的读操作，但会阻塞写操作；当前session既可以读也可以进行写操作。
+表独占写锁（table write locking） 会阻塞其他session对表的写跟读操作；当前session既可以读也可以进行写操作。
+建表模拟数据：
+CREATE TABLE `testlock` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(20) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8; INSERT INTO `testlock` (`id`, `name`) VALUES (&#39;1&#39;, &#39;a&#39;); INSERT INTO `testlock` (`id`, `name`) VALUES (&#39;2&#39;, &#39;b&#39;); INSERT INTO `testlock` (`id`, `name`) VALUES (&#39;3&#39;, &#39;c&#39;); INSERT INTO `testlock` (`id`, `name`) VALUES (&#39;4&#39;, &#39;d&#39;);  写阻塞" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/post/2020-05-27-mysql%E9%94%81/" />
+<meta property="article:published_time" content="2020-05-27T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2020-05-27T00:00:00&#43;00:00"/>
+
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="home" rel="home">
+				<div class="logo__title">home</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/post/2020-05-26-%E6%90%9C%E7%B4%A2%E6%8A%80%E5%B7%A7/">搜索技巧</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/post/2019-04-13-vim%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/">vim常规使用</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/post/2020-05-21-%E5%AD%A6%E4%B9%A0%E5%9B%BE/">学习图</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">mysql锁</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2020-05-27T00:00:00">2020-05-27</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93" rel="category">数据库</a></span>
+</div>
+</div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-myisam锁">1、MyISAM锁</a>
+<ul>
+<li><a href="#表共享读锁-table-read-locking">表共享读锁（table read locking）</a></li>
+<li><a href="#表独占写锁-table-write-locking">表独占写锁（table write locking）</a></li>
+<li><a href="#支持并发插入">支持并发插入</a></li>
+</ul></li>
+<li><a href="#2-innodb锁">2、InnoDB锁</a>
+<ul>
+<li><a href="#前置知识">前置知识</a>
+<ul>
+<li><a href="#1-事务与acid">1、事务与ACID</a></li>
+<li><a href="#2-并发事务带来的问题">2、并发事务带来的问题</a></li>
+<li><a href="#3-innodb行锁模式及加锁方法">3、InnoDB行锁模式及加锁方法</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#3-总结">3、总结</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<p><em>参考：</em></p>
+
+<p><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-locking.html">mysql5.7 InnoDB-locking</a></p>
+
+<p><a href="https://dev.mysql.com/doc/refman/5.7/en/lock-tables.html">mysql5.7 Lock-tables</a></p>
+
+<p><a href="https://github.com/bjmashibing/java/blob/master/database/note/mysql%E7%9A%84%E9%94%81%E6%9C%BA%E5%88%B6.md">马士兵database笔记</a></p>
+
+<p>mysql常用锁分为两类：</p>
+
+<p>1、表锁。开销小，粒度大，发生锁冲突概率高，并发效率低，不会产生死锁。一般适合查询类场景。</p>
+
+<p>2、行锁。开销大，粒度小，发生锁冲突概率低，并发效率高，可能会造成死锁。一般适合更新类场景。</p>
+
+<p>mysql手动开启锁：</p>
+
+<pre><code class="language-mysql">LOCK TABLES
+    tbl_name [[AS] alias] lock_type
+    [, tbl_name [[AS] alias] lock_type] ...
+
+lock_type: {
+    READ [LOCAL]
+  | [LOW_PRIORITY] WRITE
+}
+
+UNLOCK TABLES
+</code></pre>
+
+<h4 id="1-myisam锁">1、MyISAM锁</h4>
+
+<h5 id="表共享读锁-table-read-locking">表共享读锁（table read locking）</h5>
+
+<p>不会阻塞其他session对表的读操作，但会阻塞写操作；当前session既可以读也可以进行写操作。</p>
+
+<h5 id="表独占写锁-table-write-locking">表独占写锁（table write locking）</h5>
+
+<p>会阻塞其他session对表的写跟读操作；当前session既可以读也可以进行写操作。</p>
+
+<p>建表模拟数据：</p>
+
+<pre><code class="language-mysql">CREATE TABLE `testlock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+INSERT INTO `testlock` (`id`, `name`) VALUES ('1', 'a');
+INSERT INTO `testlock` (`id`, `name`) VALUES ('2', 'b');
+INSERT INTO `testlock` (`id`, `name`) VALUES ('3', 'c');
+INSERT INTO `testlock` (`id`, `name`) VALUES ('4', 'd');
+</code></pre>
+
+<p><strong>写阻塞</strong></p>
+
+<table>
+<thead>
+<tr>
+<th align="center">session1</th>
+<th align="center">session2</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">获取表的写锁<br />lock table testlock write;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center">当前session查询或写其他表会报错<br />select *from other;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center"></td>
+<td align="center">查询阻塞<br />select *from testlock;</td>
+</tr>
+
+<tr>
+<td align="center">释放锁<br />unlock tables;</td>
+<td align="center">此时查询得到结果</td>
+</tr>
+
+<tr>
+<td align="center">获取表的写锁<br />lock table testlock write;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center"></td>
+<td align="center">插入阻塞<br />insert into testlock values(5, &lsquo;e&rsquo;);<br />或者update也阻塞<br />update testlock set name=&lsquo;aa&rsquo; where id=1;</td>
+</tr>
+
+<tr>
+<td align="center">查询不阻塞<br />select *from testlock;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center">更新也不阻塞<br />update testlock set name=&lsquo;bb&rsquo; where id=2;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center">插入也不阻塞<br />insert into testlock values(6, &lsquo;f&rsquo;);</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center">释放锁<br />unlock tables;</td>
+<td align="center">此时上一条在等待中的查询或者写语句执行</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>读阻塞</strong></p>
+
+<table>
+<thead>
+<tr>
+<th align="center">session1</th>
+<th align="center">session2</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">获取表的读锁<br />lock table testlock read;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center">当前session查询或写其他表会报错<br />select *from other;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center">查询不会阻塞<br />select *from testlock;</td>
+<td align="center">此时查询不会阻塞<br />select *from testlock;</td>
+</tr>
+
+<tr>
+<td align="center"></td>
+<td align="center">写会阻塞<br />update testlock set name=&lsquo;a&rsquo; where id=1;</td>
+</tr>
+
+<tr>
+<td align="center">写会报错<br />update testlock set name=&lsquo;b&rsquo; where id=2;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center">释放锁<br />unlock tables;</td>
+<td align="center">此时更新操作成功</td>
+</tr>
+</tbody>
+</table>
+
+<h5 id="支持并发插入">支持并发插入</h5>
+
+<p>MyISAM表的读和写是串行的，这是就总体而言的，在一定条件下，MyISAM也支持查询和插入操作的并发执行。</p>
+
+<p>并发插入是以追加的方式插入，在表尾追加数据。</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">session1</th>
+<th align="center">session2</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">获取表的读锁，多了local<br />lock table testlock read local;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center">当前session查询或写其他表会报错<br />select *from other;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center">查询不会阻塞<br />select *from testlock;</td>
+<td align="center">查询不会阻塞<br />select *from testlock;</td>
+</tr>
+
+<tr>
+<td align="center">写操作会报错<br />insert into testlock values(5, &lsquo;g&rsquo;);</td>
+<td align="center">写操作正常，不会阻塞<br />insert into testlock values(5, &lsquo;g&rsquo;);</td>
+</tr>
+
+<tr>
+<td align="center">此时查询，看不到session2上一条插入的记录<br />select *from testlock;</td>
+<td align="center">此时查询，可以看到当前session插入的记录<br />select *from testlock;</td>
+</tr>
+
+<tr>
+<td align="center">释放锁<br />unlock tables;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center">再次查询则可以看到session2刚才插入的数据<br />select *from testlock;</td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<p>补充</p>
+</blockquote>
+
+<p>可以通过检查table_locks_waited和table_locks_immediate状态变量来分析系统上的表锁定争夺情况：</p>
+
+<pre><code class="language-mysql">show status like '%table_locks_%';
+
++-----------------------+-------+
+| Variable_name         | Value |
++-----------------------+-------+
+| Table_locks_immediate | 26    |
+| Table_locks_waited    | 0     |
++-----------------------+-------+
+</code></pre>
+
+<p><strong>问题</strong></p>
+
+<p>为什么MyISAM写的时候其他session不能读也不能写？</p>
+
+<p>主要是为了保证数据一致性，不然会出现脏读，导致数据不一致。</p>
+
+<p>为什么MyISAM读的时候其他session不能写？</p>
+
+<p>也是为了保证数据一致性，不然会出现脏读，导致数据不一致。</p>
+
+<p>为什么MyISAM读local的时候其他session还能写？</p>
+
+<p>主要是为了解决应用中对同一表查询和插入的锁争用问题。</p>
+
+<h4 id="2-innodb锁">2、InnoDB锁</h4>
+
+<h5 id="前置知识">前置知识</h5>
+
+<h6 id="1-事务与acid">1、事务与ACID</h6>
+
+<p>事务是由一组SQL语句组成的逻辑处理单元，事务具有4种属性类型，通常称为事务的ACID属性。</p>
+
+<ul>
+<li><code>A</code> Actomicity 原子性。事务开始到完成，对数据的修改，要么全都执行，要么全都不执行。</li>
+<li><code>C</code> Consistent 一致性。事务开始到完成，数据必须保持一致性状态。</li>
+<li><code>I</code> Isolation 隔离性。数据库系统提供一定的隔离机制，保证事务在不受外部并发操作影响的“独立”环境执行。</li>
+<li><code>D</code> Durable 持久性。事务完成之后，它对于数据的修改是永久性的，即使出现系统故障也能够保持。</li>
+</ul>
+
+<h6 id="2-并发事务带来的问题">2、并发事务带来的问题</h6>
+
+<p>相对于串行处理来说，并发事务处理能大大增加数据库资源的利用率，提高数据库系统的事务吞吐量，从而可以支持更多用户的并发操作，但与此同时，会带来一下问题：</p>
+
+<ul>
+<li><code>脏读</code> 一个事务正在对一条记录做修改，在这个事务并提交前，这条记录的数据就处于不一致状态；这时，另一个事务也来读取同一条记录，如果不加控制，第二个事务读取了这些“脏”的数据，并据此做进一步的处理，就会产生未提交的数据依赖关系。这种现象被形象地叫做“脏读”。</li>
+<li><code>不可重复读</code> 一个事务在读取某些数据已经发生了改变、或某些记录已经被删除了！这种现象叫做“不可重复读”。</li>
+<li><code>幻读</code> 一个事务按相同的查询条件重新读取以前检索过的数据，却发现其他事务插入了满足其查询条件的新数据，这种现象就称为“幻读”。</li>
+</ul>
+
+<p>上述出现的问题都是数据库读一致性的问题，可以通过事务的隔离机制来进行保证。</p>
+
+<p>数据库的事务隔离越严格，并发副作用就越小，但付出的代价也就越大，因为事务隔离本质上就是使事务在一定程度上串行化，需要根据具体的业务需求来决定使用哪种隔离级别。</p>
+
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">脏读</th>
+<th align="center">不可重复度</th>
+<th align="center">幻读</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">读不提交<br />read uncommitted</td>
+<td align="center">√</td>
+<td align="center">√</td>
+<td align="center">√</td>
+</tr>
+
+<tr>
+<td align="center">读提交<br />read committed</td>
+<td align="center"></td>
+<td align="center">√</td>
+<td align="center">√</td>
+</tr>
+
+<tr>
+<td align="center">可重复读(默认隔离级别)<br />repeatable read</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">√</td>
+</tr>
+
+<tr>
+<td align="center">序列化<br />serializable</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+
+<h6 id="3-innodb行锁模式及加锁方法">3、InnoDB行锁模式及加锁方法</h6>
+
+<p><strong>共享锁</strong></p>
+
+<p>又称读锁。允许一个事务去读一行，阻止其他事务获得相同数据集的排他锁。</p>
+
+<p><strong>排他锁</strong></p>
+
+<p>又称写锁。允许获取排他锁的事务更新数据，阻止其他事务取得相同的数据集共享读锁和排他写锁。</p>
+
+<p>mysql innodb引擎默认的修改数据语句：</p>
+
+<ul>
+<li><p>insert、update、delete都会默认给涉及的数据加上排他锁。</p></li>
+
+<li><p>select语句默认不加任何锁；但是使用<code>select .. for update</code>加排他锁，使用<code>select .. lock in share mode</code>加共享锁。</p></li>
+</ul>
+
+<p><strong>所以加过排他锁的数据行在其他事务中是不能修改数据的，也不能通过for update和lock in share mode锁的方式查询数据，但可以直接通过select …from…查询数据，因为普通查询没有任何锁机制。</strong></p>
+
+<p><strong>InnoDB行锁实现方式</strong></p>
+
+<p>innodb行锁是通过加在索引上来实现的，这一点MySQL与Oracle不同，后者是通过在数据块中对相应数据行加锁来实现的。InnoDB这种行锁实现特点意味着：只有通过索引条件检索数据，InnoDB才使用行级锁，<strong>否则，InnoDB将使用表锁！</strong></p>
+
+<p>准备数据：</p>
+
+<pre><code class="language-mysql">create table testrowlock(id int, idx int, name varchar(10)) engine=innodb;
+alter table testrowlock add index idx(idx);
+insert into testrowlock values(1, 1, '1'),(2, 2, '2'),(3, 3, '3'),(4, 4, '4');
+
+#查看所有是否有索引
+show indexes from testrowlock\G;
+</code></pre>
+
+<p>1、在不通过索引条件查询的时候，innodb使用的是表锁而不是行锁。</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">session1</th>
+<th align="center">session2</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">关闭自动提交<br />set autocommit=0;</td>
+<td align="center">关闭自动提交<br />set autocommit=0;</td>
+</tr>
+
+<tr>
+<td align="center">正常执行<br />select *from testrowlock where id=1;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center"></td>
+<td align="center">正常执行<br />select *from testrowlock where id=2;</td>
+</tr>
+
+<tr>
+<td align="center">加排他锁，不使用索引<br />select *from testrowlock where id=1 for update;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center"></td>
+<td align="center">加排他锁，会阻塞等待<br />select *from testrowlock where id=2 for update;</td>
+</tr>
+
+<tr>
+<td align="center">commit;</td>
+<td align="center">等待结束，执行完成</td>
+</tr>
+</tbody>
+</table>
+
+<p>2、通过索引条件查询的时候，innodb使用的是行锁。</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">session1</th>
+<th align="center">session2</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">关闭自动提交<br />set autocommit=0;</td>
+<td align="center">关闭自动提交<br />set autocommit=0;</td>
+</tr>
+
+<tr>
+<td align="center">正常执行<br />select *from testrowlock where idx=1;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center"></td>
+<td align="center">正常执行<br />select *from testrowlock where idx=2;</td>
+</tr>
+
+<tr>
+<td align="center">加排他锁，使用索引 idx=1<br />select *from testrowlock where idx=1 for update;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center"></td>
+<td align="center">加排他锁，使用索引 idx=2，不会等待<br />select *from testrowlock where idx=2 for update;</td>
+</tr>
+
+<tr>
+<td align="center">加排他锁，使用idx=2，此时会阻塞<br />select *from testrowlock where idx=2 for update;</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="center"></td>
+<td align="center">加排他锁，使用idx=1，此时也会阻塞<br />select *from testrowlock where idx=1 for update;</td>
+</tr>
+
+<tr>
+<td align="center"></td>
+<td align="center">两个session相互等待，造成死锁</td>
+</tr>
+
+<tr>
+<td align="center">session2检测到死锁，此时会报死锁异常<br />报异常后session2释放锁，session1执行成功</td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+
+<p>可以通过检查InnoDB_row_lock状态变量来分析系统上的行锁的争夺情况：</p>
+
+<pre><code class="language-mysql">show status like 'innodb_row_lock%';
+
++-------------------------------+-------+
+| Variable_name                 | Value |
++-------------------------------+-------+
+| Innodb_row_lock_current_waits | 0     |
+| Innodb_row_lock_time          | 0     |
+| Innodb_row_lock_time_avg      | 0     |
+| Innodb_row_lock_time_max      | 0     |
+| Innodb_row_lock_waits         | 0     |
++-------------------------------+-------+
+</code></pre>
+
+<h4 id="3-总结">3、总结</h4>
+
+<p><strong>MyISAM</strong></p>
+
+<p>1、共享读锁之间是兼容的；共享读锁与独占写锁，独占写锁与独占写锁之间是都是互斥的。</p>
+
+<p>2、在一定条件下，允许读跟并发写入，利用这点解决应用中对同一表查询和插入的锁争用问题。</p>
+
+<p>3、MyISAM默认锁调度是写锁优先执行，这并不一定适合所有应用，用户可以通过设置LOW_PRIORITY_UPDATES参数，或在INSERT、UPDATE、DELETE语句中指定LOW_PRIORITY选项来调节读写锁的争用。</p>
+
+<p>4、由于表锁的锁定粒度大，读写之间又是串行的，因此，如果更新操作较多，MyISAM表可能会出现严重的锁等待，可以考虑采用InnoDB表来减少锁冲突。</p>
+
+<p><strong>InnoDB</strong></p>
+
+<p>1、InnoDB的行锁是基于索引实现的，如果不通过索引访问数据，InnoDB会使用表锁。</p>
+
+<p>2、在不同的隔离级别下，InnoDB的锁机制和一致性读策略不同。</p>
+
+<p>用户可以通过设计和SQL调整等措施减少锁冲突和死锁，包括：</p>
+
+<ul>
+<li>尽量使用较低的隔离级别； 精心设计索引，并尽量使用索引访问数据，使加锁更精确，从而减少锁冲突的机会；</li>
+<li>选择合理的事务大小，小事务发生锁冲突的几率也更小；</li>
+<li>给记录集显式加锁时，最好一次性请求足够级别的锁。比如要修改数据的话，最好直接申请排他锁，而不是先申请共享锁，修改时再请求排他锁，这样容易产生死锁；</li>
+<li>不同的程序访问一组表时，应尽量约定以相同的顺序访问各表，对一个表而言，尽可能以固定的顺序存取表中的行。这样可以大大减少死锁的机会；</li>
+<li>尽量用相等条件访问数据，这样可以避免间隙锁对并发插入的影响； 不要申请超过实际需要的锁级别；除非必须，查询时不要显示加锁；</li>
+<li>对于一些特定的事务，可以使用表锁来提高处理速度或减少死锁的可能。</li>
+</ul>
+
+		</div>
+		
+<div class="post__tags tags clearfix">
+	<svg class="tags__icon icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item"><a class="tags__link btn" href="/tags/mysql/" rel="tag">mysql</a></li>
+	</ul>
+</div>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<div class="authorbox__header">
+		<span class="authorbox__name">About pdc</span>
+	</div>
+	<div class="authorbox__description">
+		Pdc&#39;s true identity is unknown. Maybe he is a successful engineer or doctor. Nobody knows it.
+	</div>
+</div>
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/2020-05-26-%E6%90%9C%E7%B4%A2%E6%8A%80%E5%B7%A7/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">搜索技巧</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/2020-05-27-mysql%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">mysql执行计划</p></a>
+	</div>
+</nav>
+
+<section class="comments">
+	<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "chenjipdc" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+			</div>
+			<aside class="sidebar"><div class="widget-search widget">
+	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
+		<label>
+			<input class="widget-search__field" type="search" placeholder="SEARCH..." value="" name="q" aria-label="SEARCH...">
+		</label>
+		<input class="widget-search__submit" type="submit" value="Search">
+		<input type="hidden" name="sitesearch" value="/" />
+	</form>
+</div>
+<div class="widget-recent widget">
+	<h4 class="widget__title">Recent Posts</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-27-mysql%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/">mysql执行计划</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-27-mysql%E9%94%81/">mysql锁</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-26-%E6%90%9C%E7%B4%A2%E6%8A%80%E5%B7%A7/">搜索技巧</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/categories/bigdata">Bigdata</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/hadoop">Hadoop</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/install">Install</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/java">Java</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/linux">Linux</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/markdown">Markdown</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/monitor">Monitor</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/search">Search</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/tips">Tips</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93">数据库</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Tags</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/awk" title="Awk">Awk (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/centos" title="Centos">Centos (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/github" title="Github">Github (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/google" title="Google">Google (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/hadoop" title="Hadoop">Hadoop (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/hdfs" title="Hdfs">Hdfs (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/hugo" title="Hugo">Hugo (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/java" title="Java">Java (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/jekyll" title="Jekyll">Jekyll (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/mongodb" title="Mongodb">Mongodb (3)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/mysql" title="Mysql">Mysql (3)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/spring" title="Spring">Spring (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/vim" title="Vim">Vim (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/yarn" title="Yarn">Yarn (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e5%b7%a5%e5%85%b7" title="工具">工具 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e7%94%a8%e6%88%b7%e7%ae%a1%e7%90%86" title="用户管理">用户管理 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e7%9b%91%e6%8e%a7" title="监控">监控 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e8%b5%84%e6%96%99" title="资料">资料 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e8%bd%ac%e5%8f%91" title="转发">转发 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e8%bd%af%e4%bb%b6" title="软件">软件 (1)</a>
+	</div>
+</div>
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/chenjipdc" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:chenjipdc@gmail.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>chenjipdc@gmail.com</span>
+			</a>
+		</div>
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 pdc.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

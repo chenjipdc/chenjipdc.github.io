@@ -13,7 +13,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="/" />
 
-<meta property="og:updated_time" content="2019-01-06T00:00:00&#43;00:00"/>
+<meta property="og:updated_time" content="2019-04-08T00:00:00&#43;00:00"/>
 
 	
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
@@ -60,6 +60,56 @@
 			
 <main class="main list" role="main">
 	<article class="list__item post">
+	<header class="list__header">
+		<h3 class="list__title post__title ">
+			<a href="/post/2019-04-08-%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/" rel="bookmark">
+			常用软件、工具安装
+			</a>
+		</h3>
+		<div class="list__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2019-04-08T00:00:00">2019-04-08</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/install" rel="category">install</a></span>
+</div>
+</div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		其他工具 mac  brew install ruby - 替换系统默认的ruby环境，不然很多操作都要加sudo brew install nginx brew install automake brew install iproute2mac - 替换net-tools工具 brew install openssl brew install jq - json处理 brew install glide - go包管理工具 brew install mariadb - mysql客户端 brew install tldr - 查看命令示例，man的文档太长 brew install fd - find命令的升级版，更加高效 brew install http - curl、wget工具的替换，like tool for humans brew install tmux - 类screen  centos  yum install epel-release - 安装最新软件包源 yum install -y nginx yum install -y lsof telnet tcpdump iproute2 yum install -y mariadb - mysql客户端 yum install -y &quot;Development Tools&quot; - 开发工具包  ubuntu  apt-get install iputils-ping  alpine  apk add busybox-extras  git  npm install -g commitizen - commit规范化  安装docker-ce 脚本一键安装 curl -fsSL https://get.
+	</div>
+	<div class="list__footer clearfix">
+		<a class="list__footer-readmore btn" href="/post/2019-04-08-%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/">Read more…</a>
+	</div>
+</article><article class="list__item post">
+	<header class="list__header">
+		<h3 class="list__title post__title ">
+			<a href="/post/2019-01-10-mysql-tips/" rel="bookmark">
+			mysql tips
+			</a>
+		</h3>
+		<div class="list__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2019-01-10T00:00:00">2019-01-10</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93" rel="category">数据库</a>, <a class="meta__link" href="/categories/tips" rel="category">tips</a></span>
+</div>
+</div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		mysql常用操作 # curd等 insert into table_name values (xx,xx,xx); select *from table_name; update table_name set a=xx, b=xx where c=xx; delete from table_name where a=xx; explain select *from a=xxx; # 状态、参数、表信息等 # 官网show命令：https://dev.mysql.com/doc/refman/8.0/en/show.html show indexes from table_name; show status like 'slow_queries'; show status like 'connections' ; show status like 'threads%'; Show status like 'slow_queries' or like 'connections' or like 'threads'; show variables like '%default%'; show engine innodb status; show processlist; analyze table table_name;  mysql索引  聚簇索引（保存整条记录） 普通索引（保存主键，然后回表查询记录） 下推索引（mysql 5.
+	</div>
+	<div class="list__footer clearfix">
+		<a class="list__footer-readmore btn" href="/post/2019-01-10-mysql-tips/">Read more…</a>
+	</div>
+</article><article class="list__item post">
 	<header class="list__header">
 		<h3 class="list__title post__title ">
 			<a href="/post/2019-01-06-grafana_prometheus_%E5%88%9D%E4%BD%93%E9%AA%8C/" rel="bookmark">
@@ -284,7 +334,8 @@ docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为�
 
 <div class="pagination">
 	<a class="pagination__item pagination__item--prev btn" href="/">«</a>
-	<span class="pagination__item pagination__item--current">2/2</span>
+	<span class="pagination__item pagination__item--current">2/3</span>
+	<a class="pagination__item pagination__item--next btn" href="/page/3/">»</a>
 </div>
 
 
@@ -302,9 +353,9 @@ docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为�
 	<h4 class="widget__title">Recent Posts</h4>
 	<div class="widget__content">
 		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-27-mysql%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/">mysql执行计划</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-27-mysql%E9%94%81/">mysql锁</a></li>
 			<li class="widget__item"><a class="widget__link" href="/post/2020-05-26-%E6%90%9C%E7%B4%A2%E6%8A%80%E5%B7%A7/">搜索技巧</a></li>
-			<li class="widget__item"><a class="widget__link" href="/post/2020-05-21-%E5%AD%A6%E4%B9%A0%E5%9B%BE/">学习图</a></li>
-			<li class="widget__item"><a class="widget__link" href="/post/2020-05-16-hdfs%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95/">hdfs环境搭建记录</a></li>
 		</ul>
 	</div>
 </div>
@@ -338,7 +389,7 @@ docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为�
 		<a class="widget-taglist__link widget__link btn" href="/tags/java" title="Java">Java (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/jekyll" title="Jekyll">Jekyll (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/mongodb" title="Mongodb">Mongodb (3)</a>
-		<a class="widget-taglist__link widget__link btn" href="/tags/mysql" title="Mysql">Mysql (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/mysql" title="Mysql">Mysql (3)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/spring" title="Spring">Spring (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/vim" title="Vim">Vim (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/yarn" title="Yarn">Yarn (1)</a>

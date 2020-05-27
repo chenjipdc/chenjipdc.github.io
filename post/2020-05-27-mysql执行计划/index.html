@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>mysql执行计划 - home</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<meta name="generator" content="Hugo 0.54.0" />
+	<meta property="og:title" content="mysql执行计划" />
+<meta property="og:description" content="各列含义：   详细解释：      参考：
+mysql5.7
+马士兵database笔记
+ mysql查看执行计划使用explain&#43;SQL语句。注意：执行计划里面的参数都是预估值，并不是正在的查询！！！
+ explain示例结果
+&#43;----&#43;--------------&#43;-------------&#43;------------&#43;--------&#43;---------------------&#43;---------------------&#43;---------&#43;------------------&#43;------&#43;----------&#43;-------------------------&#43; | id | select_type | table | partitions | type | possible_keys | key | key_len | ref | rows | filtered | Extra | &#43;----&#43;--------------&#43;-------------&#43;------------&#43;--------&#43;---------------------&#43;---------------------&#43;---------&#43;------------------&#43;------&#43;----------&#43;-------------------------&#43; | 1 | PRIMARY | st | NULL | index | PRIMARY | PRIMARY | 82 | NULL | 17 | 100." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/post/2020-05-27-mysql%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/" />
+<meta property="article:published_time" content="2020-05-27T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2020-05-27T00:00:00&#43;00:00"/>
+
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="home" rel="home">
+				<div class="logo__title">home</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/post/2020-05-26-%E6%90%9C%E7%B4%A2%E6%8A%80%E5%B7%A7/">搜索技巧</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/post/2019-04-13-vim%E5%B8%B8%E8%A7%84%E4%BD%BF%E7%94%A8/">vim常规使用</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/post/2020-05-21-%E5%AD%A6%E4%B9%A0%E5%9B%BE/">学习图</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">mysql执行计划</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2020-05-27T00:00:00">2020-05-27</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93" rel="category">数据库</a></span>
+</div>
+</div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		
+	</div>
+</div>
+<div class="content post__content clearfix">
+			<nav>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#各列含义">各列含义：</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#详细解释">详细解释：</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+
+<p><em>参考：</em></p>
+
+<p><a href="https://dev.mysql.com/doc/refman/5.7/en/explain-output.html">mysql5.7</a></p>
+
+<p><a href="https://github.com/bjmashibing/java/blob/master/database/note/mysql%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92.md">马士兵database笔记</a></p>
+
+<blockquote>
+<p>mysql查看执行计划使用<code>explain</code>+SQL语句。注意：执行计划里面的参数都是预估值，并不是正在的查询！！！</p>
+</blockquote>
+
+<p><strong>explain示例结果</strong></p>
+
+<pre><code class="language-mysql">+----+--------------+-------------+------------+--------+---------------------+---------------------+---------+------------------+------+----------+-------------------------+
+| id | select_type  | table       | partitions | type   | possible_keys       | key                 | key_len | ref              | rows | filtered | Extra                   |
++----+--------------+-------------+------------+--------+---------------------+---------------------+---------+------------------+------+----------+-------------------------+
+|  1 | PRIMARY      | st          | NULL       | index  | PRIMARY             | PRIMARY             | 82      | NULL             |   17 |   100.00 | NULL                    |
+|  1 | PRIMARY      | sc          | NULL       | ref    | PRIMARY             | PRIMARY             | 82      | learning.st.s_id |    2 |   100.00 | NULL                    |
+|  2 | UNION        | st          | NULL       | ALL    | NULL                | NULL                | NULL    | NULL             |   17 |   100.00 | NULL                    |
+|  2 | UNION        | &lt;subquery3| NULL       | eq_ref | &lt;auto_distinct_key| &lt;auto_distinct_key| 83      | learning.st.s_id |    1 |   100.00 | Using where; Not exists |
+|  3 | MATERIALIZED | sc          | NULL       | index  | PRIMARY             | PRIMARY             | 164     | NULL             |   22 |   100.00 | Using index             |
+| NULL | UNION RESULT | &lt;union1,2 | NULL       | ALL    | NULL                | NULL                | NULL    | NULL             | NULL |     NULL | Using temporary         |
++----+--------------+-------------+------------+--------+---------------------+---------------------+---------+------------------+------+----------+-------------------------+
+</code></pre>
+
+<h6 id="各列含义">各列含义：</h6>
+
+<table>
+<thead>
+<tr>
+<th align="center">列</th>
+<th align="center">含义</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">id</td>
+<td align="center">The <code>SELECT</code> identifier.</td>
+</tr>
+
+<tr>
+<td align="center">select_type</td>
+<td align="center">The <code>SELECT</code> type.</td>
+</tr>
+
+<tr>
+<td align="center">table</td>
+<td align="center">The name of the table to which the row of output refers.</td>
+</tr>
+
+<tr>
+<td align="center">partitions</td>
+<td align="center">The partitions from which records would be matched by the query.</td>
+</tr>
+
+<tr>
+<td align="center">type</td>
+<td align="center">The join type.</td>
+</tr>
+
+<tr>
+<td align="center">possible_keys</td>
+<td align="center">The <code>possible_keys</code> column indicates the indexes from which MySQL can choose to find the rows in this table.</td>
+</tr>
+
+<tr>
+<td align="center">key</td>
+<td align="center">The <code>key</code> column indicates the key (index) that MySQL actually decided to use.</td>
+</tr>
+
+<tr>
+<td align="center">Key_length</td>
+<td align="center">The <code>key_len</code> column indicates the length of the key that MySQL decided to use.</td>
+</tr>
+
+<tr>
+<td align="center">ref</td>
+<td align="center">The <code>ref</code> column shows which columns or constants are compared to the index named in the <code>key</code> column to select rows from the table.</td>
+</tr>
+
+<tr>
+<td align="center">rows</td>
+<td align="center">The <code>rows</code> column indicates the number of rows MySQL believes it must examine to execute the query.</td>
+</tr>
+
+<tr>
+<td align="center">filtered</td>
+<td align="center">The <code>filtered</code> column indicates an estimated percentage of table rows that will be filtered by the table condition.The maximum value is 100, which means no filtering of rows occurred.</td>
+</tr>
+
+<tr>
+<td align="center">Extra</td>
+<td align="center">This column contains additional information about how MySQL resolves the query.</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="详细解释">详细解释：</h4>
+
+<p><strong>1、id</strong></p>
+
+<blockquote>
+<p>查询语句id</p>
+</blockquote>
+
+<p>有几种情况：</p>
+
+<p>①、id值不同，越大的越先执行。</p>
+
+<p>②、id值相同，谁在前面谁先执行。</p>
+
+<p>③、id值为&lt;null，最后执行。</p>
+
+<p><strong>2、select_type</strong></p>
+
+<blockquote>
+<p>用来分辨查询的类型，是普通查询还是联合查询还是子查询</p>
+</blockquote>
+
+<p>有以下几种：</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">select_type</th>
+<th align="center">含义</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">SIMPLE</td>
+<td align="center">简单的查询，不包含子查询、union</td>
+</tr>
+
+<tr>
+<td align="center">PRIMARY</td>
+<td align="center">查询中包含任意复杂子查询，则最外层标记为primary</td>
+</tr>
+
+<tr>
+<td align="center">UNION</td>
+<td align="center">若第二个select出现在union之后，则标记为union</td>
+</tr>
+
+<tr>
+<td align="center">DEPENDENT UNION</td>
+<td align="center">跟union类似，此处的depentent表示union或union all联合而成的结果会受外部表影响</td>
+</tr>
+
+<tr>
+<td align="center">UNION RESULT</td>
+<td align="center">从union表获取结果的select</td>
+</tr>
+
+<tr>
+<td align="center">SUBQUERY</td>
+<td align="center">在select或者where列表中包含子查询</td>
+</tr>
+
+<tr>
+<td align="center">DEPENDENT SUBQUERY</td>
+<td align="center">subquery的子查询要受到外部表查询的影响</td>
+</tr>
+
+<tr>
+<td align="center">DERIVED</td>
+<td align="center">from子句中出现的子查询，也叫做派生类，临时表</td>
+</tr>
+
+<tr>
+<td align="center">UNCACHEABLE SUBQUERY</td>
+<td align="center">表示使用子查询的结果不能被缓存，使用系统变量@@</td>
+</tr>
+
+<tr>
+<td align="center">UNCACHEABLE UNION</td>
+<td align="center">表示union的查询结果不能被缓存</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>3、table</strong></p>
+
+<blockquote>
+<p>查询的表名或者别名</p>
+</blockquote>
+
+<p>有几种类型：</p>
+
+<ul>
+<li>从实际表中查询，则为实际表名或者别名</li>
+<li>从衍生表中查询。如：derivedN，表示使用了id为N的查询出来的数据作为衍生表。</li>
+<li>从union结果中查询。如：union n1,n2，表示id为n1，n2的查询参与了union。</li>
+</ul>
+
+<p><strong>4、partitions</strong></p>
+
+<blockquote>
+<p>分区编号，表示使用表在哪个分区上</p>
+</blockquote>
+
+<p><strong>5、type</strong></p>
+
+<blockquote>
+<p>表示访问类型，查询时使用索引还是全表扫描的方式</p>
+</blockquote>
+
+<p>效率排序</p>
+
+<p>system &gt; const &gt; eq_ref &gt; ref &gt; fulltext &gt; ref_or_null &gt; index_merge &gt; unique_subquery &gt; index_subquery &gt; range &gt; index &gt; ALL</p>
+
+<p>一般情况下，查询最好能达到ref级别，最起码也应该达到range级别。</p>
+
+<ul>
+<li><code>ALL</code> 全表扫描，效率最低。出现了则意味着这条sql需要要进行优化。</li>
+<li><code>index</code>  全索引扫描，效率比ALL好点。主要有两种情况：一种是当前的查询使用覆盖索引，即我们需要的数据在索引中就可以索取；一种是使用了索引进行排序，这样就避免数据的重排序。</li>
+<li><code>range</code> 表示使用索引查询的时候使用了范围查询，避免了全索引扫描。常用操作符：=,&lt;&gt;,&gt;,&gt;=,&lt;,&lt;=,is null,between,like,in。</li>
+<li><code>index_subquery</code> 利用索引来关联子查询，不再扫描全表。</li>
+<li><code>unique_subquery</code> 跟index_subquery类似，只是这个索引类型是唯一索引。</li>
+<li><code>index_merge</code> 在查询过程中需要多个索引组合使用。</li>
+<li><code>ref_or_null</code> 对于某个字段即需要关联条件，也需要null值的情况下，查询优化器会选择这种访问方式。</li>
+<li><code>fulltext</code> 使用了全文索引。</li>
+<li><code>ref</code> 使用了非唯一性索引进行数据的查找。</li>
+<li><code>eq_ref</code> 使用唯一性索引进行数据查找。</li>
+<li><code>const</code> 这个表至多有一个匹配行。</li>
+<li><code>system</code> 表只有一行记录（等于系统表），这是const类型的特例，平时不会出现。</li>
+</ul>
+
+<p><strong>6、possible_keys</strong></p>
+
+<blockquote>
+<p>表示可能使用的索引，一个或者多个</p>
+</blockquote>
+
+<p><strong>7、key</strong></p>
+
+<blockquote>
+<p>表示使用的哪些索引</p>
+</blockquote>
+
+<p><strong>8、key_len</strong></p>
+
+<blockquote>
+<p>表示索引中使用的字节数</p>
+</blockquote>
+
+<p><strong>9、ref</strong></p>
+
+<blockquote>
+<p>表示索引中的哪一列被使用</p>
+</blockquote>
+
+<p><strong>10、rows</strong></p>
+
+<blockquote>
+<p>表示可能扫描多少行</p>
+</blockquote>
+
+<p><strong>11、filtered</strong></p>
+
+<blockquote>
+<p>行数过滤的比例，是一个百分比，最大值100</p>
+</blockquote>
+
+<p><strong>12、Extra</strong></p>
+
+<blockquote>
+<p>额外补充的信息</p>
+</blockquote>
+
+<p>包含以下几种：</p>
+
+<ul>
+<li>using filesort    表示无法使用索引在内存中进行排序，需要使用临时文件进行排序。</li>
+<li>using temporary 表示创建了临时表，查询使用完后删除。</li>
+<li>using where 使用了where条件过滤</li>
+<li>using index 表示通过索引就可以得到数据，不需要真正的去查询表数据，如使用了覆盖索引。</li>
+<li>using join buffer 使用连接缓存</li>
+<li>using impossible where</li>
+</ul>
+
+		</div>
+		
+<div class="post__tags tags clearfix">
+	<svg class="tags__icon icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item"><a class="tags__link btn" href="/tags/mysql/" rel="tag">mysql</a></li>
+	</ul>
+</div>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<div class="authorbox__header">
+		<span class="authorbox__name">About pdc</span>
+	</div>
+	<div class="authorbox__description">
+		Pdc&#39;s true identity is unknown. Maybe he is a successful engineer or doctor. Nobody knows it.
+	</div>
+</div>
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/2020-05-27-mysql%E9%94%81/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">mysql锁</p></a>
+	</div>
+</nav>
+
+<section class="comments">
+	<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "chenjipdc" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+			</div>
+			<aside class="sidebar"><div class="widget-search widget">
+	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
+		<label>
+			<input class="widget-search__field" type="search" placeholder="SEARCH..." value="" name="q" aria-label="SEARCH...">
+		</label>
+		<input class="widget-search__submit" type="submit" value="Search">
+		<input type="hidden" name="sitesearch" value="/" />
+	</form>
+</div>
+<div class="widget-recent widget">
+	<h4 class="widget__title">Recent Posts</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-27-mysql%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/">mysql执行计划</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-27-mysql%E9%94%81/">mysql锁</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-26-%E6%90%9C%E7%B4%A2%E6%8A%80%E5%B7%A7/">搜索技巧</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/categories/bigdata">Bigdata</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/hadoop">Hadoop</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/install">Install</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/java">Java</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/linux">Linux</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/markdown">Markdown</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/monitor">Monitor</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/search">Search</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/tips">Tips</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93">数据库</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Tags</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/awk" title="Awk">Awk (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/centos" title="Centos">Centos (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/github" title="Github">Github (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/google" title="Google">Google (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/hadoop" title="Hadoop">Hadoop (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/hdfs" title="Hdfs">Hdfs (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/hugo" title="Hugo">Hugo (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/java" title="Java">Java (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/jekyll" title="Jekyll">Jekyll (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/mongodb" title="Mongodb">Mongodb (3)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/mysql" title="Mysql">Mysql (3)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/spring" title="Spring">Spring (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/vim" title="Vim">Vim (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/yarn" title="Yarn">Yarn (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e5%b7%a5%e5%85%b7" title="工具">工具 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e7%94%a8%e6%88%b7%e7%ae%a1%e7%90%86" title="用户管理">用户管理 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e7%9b%91%e6%8e%a7" title="监控">监控 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e8%b5%84%e6%96%99" title="资料">资料 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e8%bd%ac%e5%8f%91" title="转发">转发 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%e8%bd%af%e4%bb%b6" title="软件">软件 (1)</a>
+	</div>
+</div>
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/chenjipdc" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:chenjipdc@gmail.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>chenjipdc@gmail.com</span>
+			</a>
+		</div>
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 pdc.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

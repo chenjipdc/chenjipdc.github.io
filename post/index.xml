@@ -6,10 +6,44 @@
     <description>Recent content in Posts on home</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 26 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 27 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>mysql执行计划</title>
+      <link>/post/2020-05-27-mysql%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/</link>
+      <pubDate>Wed, 27 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020-05-27-mysql%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/</guid>
+      <description>各列含义：   详细解释：      参考：
+mysql5.7
+马士兵database笔记
+ mysql查看执行计划使用explain+SQL语句。注意：执行计划里面的参数都是预估值，并不是正在的查询！！！
+ explain示例结果
++----+--------------+-------------+------------+--------+---------------------+---------------------+---------+------------------+------+----------+-------------------------+ | id | select_type | table | partitions | type | possible_keys | key | key_len | ref | rows | filtered | Extra | +----+--------------+-------------+------------+--------+---------------------+---------------------+---------+------------------+------+----------+-------------------------+ | 1 | PRIMARY | st | NULL | index | PRIMARY | PRIMARY | 82 | NULL | 17 | 100.</description>
+    </item>
+    
+    <item>
+      <title>mysql锁</title>
+      <link>/post/2020-05-27-mysql%E9%94%81/</link>
+      <pubDate>Wed, 27 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020-05-27-mysql%E9%94%81/</guid>
+      <description>参考：
+mysql5.7 InnoDB-locking
+mysql5.7 Lock-tables
+马士兵database笔记
+mysql常用锁分为两类：
+1、表锁。开销小，粒度大，发生锁冲突概率高，并发效率低，不会产生死锁。一般适合查询类场景。
+2、行锁。开销大，粒度小，发生锁冲突概率低，并发效率高，可能会造成死锁。一般适合更新类场景。
+mysql手动开启锁：
+LOCK TABLES tbl_name [[AS] alias] lock_type [, tbl_name [[AS] alias] lock_type] ... lock_type: { READ [LOCAL] | [LOW_PRIORITY] WRITE } UNLOCK TABLES  1、MyISAM锁 表共享读锁（table read locking） 不会阻塞其他session对表的读操作，但会阻塞写操作；当前session既可以读也可以进行写操作。
+表独占写锁（table write locking） 会阻塞其他session对表的写跟读操作；当前session既可以读也可以进行写操作。
+建表模拟数据：
+CREATE TABLE `testlock` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(20) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8; INSERT INTO `testlock` (`id`, `name`) VALUES (&#39;1&#39;, &#39;a&#39;); INSERT INTO `testlock` (`id`, `name`) VALUES (&#39;2&#39;, &#39;b&#39;); INSERT INTO `testlock` (`id`, `name`) VALUES (&#39;3&#39;, &#39;c&#39;); INSERT INTO `testlock` (`id`, `name`) VALUES (&#39;4&#39;, &#39;d&#39;);  写阻塞</description>
+    </item>
     
     <item>
       <title>搜索技巧</title>
@@ -220,6 +254,51 @@ docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为�
  kramdown语法
  在Jekyll中遇到的一些markdown问题
   </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/post/hive%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/post/hive%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/post/mysql%E4%B8%BB%E4%BB%8E/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/post/mysql%E4%B8%BB%E4%BB%8E/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/post/mysql%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/post/mysql%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/post/redis/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/post/redis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/post/zookeeper/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/post/zookeeper/</guid>
+      <description></description>
     </item>
     
   </channel>
