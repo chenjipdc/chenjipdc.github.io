@@ -6,10 +6,30 @@
     <description>Recent content in 数据库 on home</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 27 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 28 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>mysql主从</title>
+      <link>/post/2020-05-28-mysql%E4%B8%BB%E4%BB%8E/</link>
+      <pubDate>Thu, 28 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020-05-28-mysql%E4%B8%BB%E4%BB%8E/</guid>
+      <description>mysql集群可以简单分为几类：
+1、一主一从，常用，简单，多用于读写分离或备份。
+master -----&amp;gt; slave  2、互为主主，不常用。
+master1 &amp;lt;-----&amp;gt; master2  3、一主多从，常用，多用于读写分离跟备份。
+master1 -----&amp;gt; slave1 \-----&amp;gt; slave2 \-----&amp;gt; slave3  4、一主多级从，不常用。缺点很明显，多级数据同步时间会是个硬伤；多级如果上级挂了，下级数据就不能同步，也是个硬伤。
+master -----&amp;gt; slave1 ----&amp;gt; slave5 \-----&amp;gt; slave2 -----&amp;gt; slave3 \------&amp;gt; slave4  5、多主一从，不常用。
+master1 ---------\ master2 ------------&amp;gt; slave1 master3 ---------/  搭建一主一从
+首先需要准备两台服务器：node04、node05，使用mysql5.7。
+node04作为master。ip：192.168.56.14
+node05作为slave。ip：192.168.56.15
+node05的/etc/hosts文件增加192.168.56.14 node04
+ 配置前两台mysql服务器都需创建需要同步的数据库是哪个  create database pdc;   node04节点修改mysql配置  vi /etc/my.cnf # [mysqld]加入以下配置 log-bin=master-bin #二进制文件名称 binlog-format=ROW #二进制日志格式，有row、statement、mixed三种格式，row指的是把改变的内容复制过去，而不是把命令在从服务器上执行一遍，statement指的是在主服务器上执行的SQL语句，在从服务器上执行同样的语句。MySQL默认采用基于语句的复制，效率比较高。mixed指的是默认采用基于语句的复制，一旦发现基于语句的无法精确的复制时，就会采用基于行的复制。 server-id=1	#要求各个服务器的id必须不一样 binlog-do-db=pdc #同步的数据库名称   登录node4的mysql授权同步的用户  # 授权操作 set global validate_password_policy=0; set global validate_password_length=1; grant replication slave on *.</description>
+    </item>
     
     <item>
       <title>mysql执行计划</title>

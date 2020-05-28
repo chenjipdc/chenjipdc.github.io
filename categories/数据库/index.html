@@ -13,7 +13,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" />
 
-<meta property="og:updated_time" content="2020-05-27T00:00:00&#43;00:00"/>
+<meta property="og:updated_time" content="2020-05-28T00:00:00&#43;00:00"/>
 
 	
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
@@ -62,6 +62,42 @@
 	<header class="main__header">
 		<h1 class="main__title">数据库</h1>
 	</header><article class="list__item post">
+	<header class="list__header">
+		<h3 class="list__title post__title ">
+			<a href="/post/2020-05-28-mysql%E4%B8%BB%E4%BB%8E/" rel="bookmark">
+			mysql主从
+			</a>
+		</h3>
+		<div class="list__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2020-05-28T00:00:00">2020-05-28</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/%e6%95%b0%e6%8d%ae%e5%ba%93" rel="category">数据库</a></span>
+</div>
+</div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		mysql集群可以简单分为几类：
+1、一主一从，常用，简单，多用于读写分离或备份。
+master -----&gt; slave  2、互为主主，不常用。
+master1 &lt;-----&gt; master2  3、一主多从，常用，多用于读写分离跟备份。
+master1 -----&gt; slave1 \-----&gt; slave2 \-----&gt; slave3  4、一主多级从，不常用。缺点很明显，多级数据同步时间会是个硬伤；多级如果上级挂了，下级数据就不能同步，也是个硬伤。
+master -----&gt; slave1 ----&gt; slave5 \-----&gt; slave2 -----&gt; slave3 \------&gt; slave4  5、多主一从，不常用。
+master1 ---------\ master2 ------------&gt; slave1 master3 ---------/  搭建一主一从
+首先需要准备两台服务器：node04、node05，使用mysql5.7。
+node04作为master。ip：192.168.56.14
+node05作为slave。ip：192.168.56.15
+node05的/etc/hosts文件增加192.168.56.14 node04
+ 配置前两台mysql服务器都需创建需要同步的数据库是哪个  create database pdc;   node04节点修改mysql配置  vi /etc/my.cnf # [mysqld]加入以下配置 log-bin=master-bin #二进制文件名称 binlog-format=ROW #二进制日志格式，有row、statement、mixed三种格式，row指的是把改变的内容复制过去，而不是把命令在从服务器上执行一遍，statement指的是在主服务器上执行的SQL语句，在从服务器上执行同样的语句。MySQL默认采用基于语句的复制，效率比较高。mixed指的是默认采用基于语句的复制，一旦发现基于语句的无法精确的复制时，就会采用基于行的复制。 server-id=1	#要求各个服务器的id必须不一样 binlog-do-db=pdc #同步的数据库名称   登录node4的mysql授权同步的用户  # 授权操作 set global validate_password_policy=0; set global validate_password_length=1; grant replication slave on *.
+	</div>
+	<div class="list__footer clearfix">
+		<a class="list__footer-readmore btn" href="/post/2020-05-28-mysql%E4%B8%BB%E4%BB%8E/">Read more…</a>
+	</div>
+</article><article class="list__item post">
 	<header class="list__header">
 		<h3 class="list__title post__title ">
 			<a href="/post/2020-05-27-mysql%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/" rel="bookmark">
@@ -252,9 +288,9 @@ docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为�
 	<h4 class="widget__title">Recent Posts</h4>
 	<div class="widget__content">
 		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/post/2020-05-28-mysql%E4%B8%BB%E4%BB%8E/">mysql主从</a></li>
 			<li class="widget__item"><a class="widget__link" href="/post/2020-05-27-mysql%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/">mysql执行计划</a></li>
 			<li class="widget__item"><a class="widget__link" href="/post/2020-05-27-mysql%E9%94%81/">mysql锁</a></li>
-			<li class="widget__item"><a class="widget__link" href="/post/2020-05-26-%E6%90%9C%E7%B4%A2%E6%8A%80%E5%B7%A7/">搜索技巧</a></li>
 		</ul>
 	</div>
 </div>
@@ -288,7 +324,7 @@ docker network create -d bridge --subnet 172.11.0.0/24 mongo_network  启动为�
 		<a class="widget-taglist__link widget__link btn" href="/tags/java" title="Java">Java (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/jekyll" title="Jekyll">Jekyll (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/mongodb" title="Mongodb">Mongodb (3)</a>
-		<a class="widget-taglist__link widget__link btn" href="/tags/mysql" title="Mysql">Mysql (3)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/mysql" title="Mysql">Mysql (4)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/spring" title="Spring">Spring (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/vim" title="Vim">Vim (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/yarn" title="Yarn">Yarn (1)</a>
