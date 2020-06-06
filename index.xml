@@ -6,10 +6,23 @@
     <description>Recent content on home</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 28 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 06 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>游戏</title>
+      <link>/post/2020-06-06-%E6%B8%B8%E6%88%8F/</link>
+      <pubDate>Sat, 06 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020-06-06-%E6%B8%B8%E6%88%8F/</guid>
+      <description>适当的娱乐休闲，才能更好的撸码。
+ 无人深空（No Man&amp;rsquo;s Sky）  stream上的太空题材探索类游戏，里面有无数的星球，每个星球都有自己独特的样貌，独特的生物。
+ 游戏截图 星系： 太空异象： 基地1： 基地2： 基地3： 候选基地1： 矿场1： 其他1： 星际舰队1： stream 喜欢玩的可以加stream一起玩，个人觉得这款游戏比较好玩，可以无限的探索星球。
+stream name: chenjipdc
+stream id: 1051479810</description>
+    </item>
     
     <item>
       <title>mysql主从</title>
