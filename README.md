@@ -46,6 +46,7 @@ link: https://chenjipdc.github.io/
 
 
 ### other
+- [游戏](https://chenjipdc.github.io/post/2020-06-06-%E6%B8%B8%E6%88%8F/)
 - [常用软件、工具安装](https://chenjipdc.github.io/post/2019-04-08-%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/)
 - [Hugo 个人站搭建工具](https://chenjipdc.github.io/post/2019-04-09-hugo/)
 - [github等整理的资料](https://chenjipdc.github.io/post/2019-04-08-github%E7%AD%89%E6%95%B4%E7%90%86%E7%9A%84%E8%B5%84%E6%96%99/)
